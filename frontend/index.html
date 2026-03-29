@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+  <title>Auth System UI</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input {
+      padding: 8px;
+      margin: 5px;
+      width: 200px;
+    }
+    button {
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 20px;
+      color: green;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2> Auth System</h2>
+
+  <h3>Create User</h3>
+  <input id="email" placeholder="Email"><br>
+  <input id="password" placeholder="Password" type="password"><br>
+  <input id="group" placeholder="Group ID"><br>
+  <button onclick="createUser()">Create User</button>
+
+  <h3>Login</h3>
+  <input id="loginEmail" placeholder="Email"><br>
+  <input id="loginPassword" placeholder="Password" type="password"><br>
+  <button onclick="login()">Login</button>
+
+  <div id="output"></div>
+
+  <script>
+const BASE_URL = "http://127.0.0.1:5000";
+
+// 🔹 Create User
+async function createUser() {
+  try {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const group_id = document.getElementById("group").value;
+
+    const res = await fetch(BASE_URL + "/users/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password, group_id })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("output").innerText =
+      "User Created ✅\n\n" + JSON.stringify(data, null, 2);
+
+  } catch (err) {
+    document.getElementById("output").innerText =
+      "Error: " + err;
+    console.error(err);
+  }
+}
+
+// 🔹 Login
+async function login() {
+  try {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    const res = await fetch(BASE_URL + "/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (data.token) {
+      document.getElementById("output").innerText =
+        "Login Success ✅\n\nToken:\n" + data.token;
+    } else {
+      document.getElementById("output").innerText =
+        "Login Failed ❌\n" + JSON.stringify(data);
+    }
+
+  } catch (err) {
+    document.getElementById("output").innerText =
+      "Error: " + err;
+    console.error(err);
+  }
+}
+</script>
+
+</body>
+</html>
