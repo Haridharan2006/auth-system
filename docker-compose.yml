@@ -50,5 +50,13 @@ services:
     depends_on:
       - nginx
 
+  frontend:
+    build: ./frontend
+    container_name: frontend_server
+    ports:
+      - "5500:5500"
+    depends_on:
+      - backend
+
 volumes:
   pgdata:
