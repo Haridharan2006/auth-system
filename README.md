@@ -1,138 +1,172 @@
 # 🔐 OAuth 2.0 Authentication System
 
-A web-based authentication system that supports user management, group-based authorization, and JWT token-based authentication. The system is containerized using Docker and uses an API Gateway (KrakenD) with Nginx as a reverse proxy.
+A **Dockerized web-based authentication system** that supports user management, group-based authorization, and JWT-based authentication.
+The system is designed with a simple frontend, Node.js backend, and PostgreSQL database.
 
 ---
 
 ## 🚀 Features
 
-- 👤 User Management (Create users)
-- 👥 Group-based Authorization
-- 🔑 JWT Token Authentication
-- 🌐 API Gateway using KrakenD
-- 🔁 Reverse Proxy using Nginx
-- 🗄 PostgreSQL Database
-- 🐳 Docker-based Deployment
-- 💻 Simple Frontend UI
+* 👤 User Management (Create users)
+* 👥 Group-based Authorization
+* 🔑 JWT Token Authentication
+* 🗄 PostgreSQL Database
+* 🐳 Fully Dockerized (Frontend + Backend + DB)
+* ⚡ One-command startup using shell scripts
+* 💻 Simple Frontend UI for testing
 
 ---
 
-## 🚀 Deployment Guide
+## 🏗️ Architecture
 
-This project is containerized using Docker and can be deployed locally using Docker Compose.
+Frontend (HTML/JS - served via Python in Docker)
+⬇
+Backend (Node.js + Express)
+⬇
+PostgreSQL Database
+⬇
+Docker (Containerized environment)
 
 ---
+
+## 📦 Tech Stack
+
+* Node.js (Express)
+* PostgreSQL
+* Docker & Docker Compose
+* HTML, CSS, JavaScript
+* Python (for frontend server inside Docker)
+
+---
+
+## ⚙️ Setup & Run
 
 ### 🔹 Prerequisites
 
-- Docker
-- Docker Compose
+* Docker
+* Docker Compose
 
 ---
 
-### 🔹 Step 1: Clone the Repository
+### 🔹 Start the Application
 
 ```bash
-git clone https://github.com/Haridharan2006/auth-system.git
-cd auth-system
+./start.sh
+```
+
+This will:
+
+* Start backend, database, and frontend containers
+* Automatically open the frontend in browser
+
+---
+
+### 🔹 Stop the Application
+
+```bash
+./stop.sh
 ```
 
 ---
 
-### 🔹 Step 2: Start the Application
+## 🌐 Access the App
 
-```bash
-docker-compose up --build
-```
-
-This will start:
-
-- PostgreSQL Database (Port: 5432)
-- Backend Server (Port: 5000)
-- Nginx Reverse Proxy (Port: 8080)
-- KrakenD API Gateway (Port: 8090)
-
----
-
-### 🔹 Step 3: Run Frontend
-
-```bash
-cd frontend
-python3 -m http.server 5500
-```
-
-Open in browser:
+Frontend:
 
 ```
 http://localhost:5500
 ```
 
----
+Backend API:
 
-### 🔹 Step 4: Access Services
-
-- Backend → http://localhost:5000  
-- API Gateway → http://localhost:8090  
-
----
-
-### 🔹 Step 5: Test the Application
-
-- Create a group → `POST /groups/create`  
-- Create a user → `POST /users/create`  
-- Login → `POST /auth/login`  
-- Receive JWT token  
+```
+http://localhost:5000
+```
 
 ---
 
-### 🔹 Step 6: Stop the Application
+## 🧪 API Flow
 
-```bash
-docker-compose down
+### 1️⃣ Create Group
+
+```
+POST /groups/create
+```
+
+### 2️⃣ Create User
+
+```
+POST /users/create
+```
+
+### 3️⃣ Login
+
+```
+POST /auth/login
+```
+
+### 4️⃣ Response
+
+Returns a JWT token:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIs..."
+}
 ```
 
 ---
 
 ## 🔐 Authentication Flow
 
-1. User logs in  
-2. Backend verifies credentials  
-3. JWT token is generated  
-4. Token is returned to frontend  
+1. User registers with group
+2. Password is hashed using bcrypt
+3. User logs in with credentials
+4. Backend validates credentials
+5. JWT token is generated and returned
 
 ---
 
-## 🗄 Database
+## 📁 Project Structure
 
-Tables used:
-
-- `users`
-- `groups`
+```
+auth-system/
+│
+├── backend/
+│   ├── controllers/
+│   ├── routes/
+│   ├── models/
+│   └── app.js
+│
+├── frontend/
+│   ├── index.html
+│   └── Dockerfile
+│
+├── docker-compose.yml
+├── start.sh
+├── stop.sh
+└── README.md
+```
 
 ---
 
-## 🧑‍💻 Tech Stack
+## 📌 Key Highlights
 
-- Node.js (Express)
-- PostgreSQL
-- Docker & Docker Compose
-- KrakenD API Gateway
-- Nginx
-- HTML, CSS, JavaScript
-
----
-
-## 📌 Notes
-
-- Passwords are hashed using bcrypt  
-- JWT is used for authentication  
-- Do not expose database publicly  
+* Fully containerized system using Docker
+* Clean Git repository with `.gitignore`
+* Automated startup using shell scripts
+* Demonstrates authentication & authorization concepts
 
 ---
 
 ## 🎯 Summary
 
-This project demonstrates a complete authentication system with user management, authorization, and token-based security, inspired by OAuth 2.0 principles.
+This project demonstrates a **complete authentication system** with:
+
+* User management
+* Authorization using groups
+* Secure login with JWT tokens
+* Containerized deployment
 
 ---
 
