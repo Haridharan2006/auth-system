@@ -1,147 +1,117 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Auth System</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      width: 320px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-
-    h2 {
-      margin-bottom: 10px;
-    }
-
-    h3 {
-      margin-top: 20px;
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 6px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      width: 95%;
-      padding: 10px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 6px;
-      background: #4facfe;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: #00c6ff;
-    }
-
-    #output {
-      margin-top: 15px;
-      padding: 10px;
-      background: #f5f5f5;
-      border-radius: 6px;
-      font-size: 12px;
-      word-break: break-all;
-      max-height: 150px;
-      overflow-y: auto;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Auth System</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4facfe;
+            color: white;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #createResult, #loginResult {
+            margin-top: 10px;
+            font-size: 12px;
+            word-wrap: break-word;
+        }
+    </style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="box">
     <h2>🔐 Auth System</h2>
 
     <h3>Create User</h3>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <input id="group" placeholder="Group ID">
+    <input id="createEmail" placeholder="Email">
+    <input id="createPassword" type="password" placeholder="Password">
+    <input id="createGroup" placeholder="Group ID">
     <button onclick="createUser()">Create User</button>
+
+    <div id="createResult"></div>
 
     <h3>Login</h3>
     <input id="loginEmail" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
 
-    <div id="output">Output will appear here...</div>
-  </div>
+    <div id="loginResult"></div>
+</div>
 
-  <script>
-    const BASE_URL = "http://127.0.0.1:5000";
+<script>
+async function createUser() {
+    const email = document.getElementById("createEmail").value;
+    const password = document.getElementById("createPassword").value;
+    const group_id = document.getElementById("createGroup").value;
 
-    async function createUser() {
-      try {
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        const group_id = document.getElementById("group").value;
-
-        const res = await fetch(BASE_URL + "/users/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password, group_id })
+    try {
+        const res = await fetch("http://127.0.0.1:5000/users/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password, group_id })
         });
 
         const data = await res.json();
 
-        document.getElementById("output").innerText =
-          "✅ User Created\n\n" + JSON.stringify(data, null, 2);
+        document.getElementById("createResult").innerText =
+            JSON.stringify(data, null, 2);
 
-      } catch (err) {
-        document.getElementById("output").innerText = "❌ Error: " + err;
-      }
+    } catch (err) {
+        document.getElementById("createResult").innerText =
+            "Error: " + err.message;
     }
+}
 
-    async function login() {
-      try {
-        const email = document.getElementById("loginEmail").value;
-        const password = document.getElementById("loginPassword").value;
+async function login() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
 
-        const res = await fetch(BASE_URL + "/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
+    try {
+        const res = await fetch("http://127.0.0.1:5000/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password })
         });
 
         const data = await res.json();
 
-        if (data.token) {
-          document.getElementById("output").innerText =
-            "✅ Login Success\n\nToken:\n" + data.token;
-        } else {
-          document.getElementById("output").innerText =
-            "❌ Login Failed\n" + JSON.stringify(data);
-        }
+        document.getElementById("loginResult").innerText =
+            JSON.stringify(data, null, 2);
 
-      } catch (err) {
-        document.getElementById("output").innerText = "❌ Error: " + err;
-      }
+    } catch (err) {
+        document.getElementById("loginResult").innerText =
+            "Error: " + err.message;
     }
-  </script>
+}
+</script>
 
 </body>
 </html>

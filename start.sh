@@ -2,25 +2,13 @@
 
 echo "🚀 Starting Auth System..."
 
-# Start all containers
 docker-compose up --build -d
 
-echo "⏳ Waiting for services to start..."
+echo "⏳ Waiting for services..."
 sleep 5
 
-echo "🌐 Opening application in browser..."
+echo "🌐 Opening frontend..."
 
-# Detect OS and open browser
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    xdg-open http://localhost:5500
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-    open http://localhost:5500
-else
-    echo "Please open manually: http://localhost:5500"
-fi
+xdg-open http://localhost:5500 2>/dev/null || open http://localhost:5500
 
 echo "✅ Application Started!"
-
-echo "🌐 Frontend: http://localhost:5500"
-echo "⚙ Backend: http://localhost:5000"
-echo "🚪 Gateway: http://localhost:8090"

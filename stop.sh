@@ -1,5 +1,7 @@
 #!/bin/bash
 
-echo "🛑 Stopping Auth System..."
+echo "🛑 Stopping application..."
+
 docker-compose down
-echo "Stopped!"
+
+echo "✅ Stopped!"
