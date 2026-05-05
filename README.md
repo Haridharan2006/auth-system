@@ -1,7 +1,7 @@
 # 🔐 OAuth 2.0 Authentication System
 
 A **fully containerized authentication system** with user management, group-based authorization, and JWT-based authentication.
-The application includes a frontend UI, backend API, and PostgreSQL database — all managed using Docker.
+The system includes a frontend UI, backend API, and PostgreSQL database — all managed using Docker with **automatic database schema initialization using Knex migrations**.
 
 ---
 
@@ -13,6 +13,7 @@ The application includes a frontend UI, backend API, and PostgreSQL database —
 * 🗄 PostgreSQL Database
 * 🐳 Fully Dockerized (Frontend + Backend + DB)
 * ⚡ One-command startup (Shell & Batch scripts)
+* 🔄 Automatic DB schema setup using Knex migrations
 * 💻 Simple Frontend UI
 
 ---
@@ -21,7 +22,7 @@ The application includes a frontend UI, backend API, and PostgreSQL database —
 
 Frontend (HTML/JS via Python server in Docker)
 ⬇
-Backend (Node.js + Express)
+Backend (Node.js + Express + Knex)
 ⬇
 PostgreSQL Database
 ⬇
@@ -33,6 +34,7 @@ Docker (Containerized environment)
 
 * Node.js (Express)
 * PostgreSQL
+* Knex.js (Query Builder & Migrations)
 * Docker & Docker Compose
 * HTML, CSS, JavaScript
 * Python (for frontend server inside Docker)
@@ -52,7 +54,7 @@ Docker (Containerized environment)
 
 ### 🐧 Linux / Mac
 
-```bash id="2t72rn"
+```bash
 ./start.sh
 ```
 
@@ -60,7 +62,7 @@ Docker (Containerized environment)
 
 ### 🪟 Windows
 
-```bat id="smv1o1"
+```bat
 start.bat
 ```
 
@@ -69,7 +71,8 @@ start.bat
 👉 This will:
 
 * Start all containers (backend, database, frontend)
-* Open the frontend automatically in browser
+* Automatically run database migrations
+* Open the frontend in browser
 
 ---
 
@@ -77,7 +80,7 @@ start.bat
 
 ### 🐧 Linux / Mac
 
-```bash id="6w3g6j"
+```bash
 ./stop.sh
 ```
 
@@ -85,7 +88,7 @@ start.bat
 
 ### 🪟 Windows
 
-```bat id="x9u0o2"
+```bat
 stop.bat
 ```
 
@@ -95,13 +98,13 @@ stop.bat
 
 Frontend:
 
-```id="n4qs2z"
+```
 http://localhost:5500
 ```
 
 Backend API:
 
-```id="93vn2o"
+```
 http://localhost:5000
 ```
 
@@ -111,25 +114,25 @@ http://localhost:5000
 
 ### 1️⃣ Create Group
 
-```id="a4f84p"
+```
 POST /groups/create
 ```
 
 ### 2️⃣ Create User
 
-```id="3v8c8p"
+```
 POST /users/create
 ```
 
 ### 3️⃣ Login
 
-```id="7j2qbj"
+```
 POST /auth/login
 ```
 
 ### 4️⃣ Response
 
-```json id="9v1qqn"
+```json
 {
   "token": "eyJhbGciOiJIUzI1NiIs..."
 }
@@ -147,15 +150,35 @@ POST /auth/login
 
 ---
 
+## 🗄 Database Schema
+
+### users
+
+* id
+* email
+* password
+* group_id (foreign key)
+
+### groups
+
+* id
+* name
+
+👉 Tables are automatically created using **Knex migrations**.
+
+---
+
 ## 📁 Project Structure
 
-```id="9g7m0s"
+```
 auth-system/
 │
 ├── backend/
 │   ├── controllers/
 │   ├── routes/
 │   ├── models/
+│   ├── migrations/
+│   ├── knexfile.js
 │   └── app.js
 │
 ├── frontend/
@@ -175,6 +198,7 @@ auth-system/
 ## 📌 Key Highlights
 
 * Fully containerized system using Docker
+* Automatic database schema setup using migrations
 * Cross-platform support (Linux, Mac, Windows)
 * Automated startup using scripts
 * Clean Git repository using `.gitignore`
@@ -189,6 +213,7 @@ This project demonstrates a **complete authentication system** with:
 * User management
 * Group-based authorization
 * Secure login using JWT
+* Automatic database initialization
 * Docker-based deployment
 * Cross-platform automation
 
