@@ -12,7 +12,7 @@ exports.login = async (req, res) => {
         );
 
         if (result.rows.length === 0) {
-            return res.status(401).json({ message: "User not found" });
+            return res.status(401).json({ message: "Invalid username and/or password" });
         }
 
         const user = result.rows[0];
@@ -20,7 +20,7 @@ exports.login = async (req, res) => {
         const validPassword = await bcrypt.compare(password, user.password);
 
         if (!validPassword) {
-            return res.status(401).json({ message: "Invalid password" });
+            return res.status(401).json({ message: "Invalid username and/or password" });
         }
 
         const token = jwt.sign(
