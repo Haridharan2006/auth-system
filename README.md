@@ -1,37 +1,37 @@
 # 🔐 OAuth 2.0 & OpenID Connect Authentication System
 
-A **fully containerized authentication and authorization system** with user management, group-based authorization, JWT-based authentication, and OpenID Connect (OIDC) integration using Keycloak.
+A fully containerized authentication and authorization system built using Node.js, Express, PostgreSQL, JWT Authentication, and OpenID Connect (OIDC) integration using Keycloak.
 
-The system includes a frontend UI, backend API, PostgreSQL database, API Gateway, reverse proxy, and Identity Provider — all managed using Docker with **automatic database schema initialization using Knex migrations**.
+The system includes a frontend UI, backend API, PostgreSQL database, API Gateway, reverse proxy, and Identity Provider — all managed using Docker with automatic database schema initialization using Knex migrations.
 
 ---
 
-## 🚀 Features
+# 🚀 Features
 
-### Authentication & Authorization
+## Authentication & Authorization
 
-* 👤 User Management (Create users)
+* 👤 User Management (Create Users)
 * 👥 Group-based Authorization
 * 🔑 JWT Token Authentication
 * 🌐 OpenID Connect (OIDC) Integration using Keycloak
 * 🔒 Password Hashing using bcrypt
 * 🛡 Generic Authentication Error Messages
 
-### API & Documentation
+## API & Documentation
 
 * 📄 Swagger API Documentation
 * 🧪 Unit Testing using Jest
 
-### Infrastructure
+## Infrastructure
 
 * 🗄 PostgreSQL Database
 * 🐳 Fully Dockerized
 * ⚡ One-command startup (Shell & Batch scripts)
-* 🔄 Automatic DB schema setup using Knex migrations
+* 🔄 Automatic Database Schema Setup using Knex Migrations
 * 🌍 Nginx Reverse Proxy
 * 🚪 KrakenD API Gateway
 
-### Frontend
+## Frontend
 
 * 💻 Simple Frontend UI
 * 🔐 Login using JWT Authentication
@@ -39,30 +39,35 @@ The system includes a frontend UI, backend API, PostgreSQL database, API Gateway
 
 ---
 
-## 🏗️ Architecture
+# 🏗️ Architecture
 
 Frontend (HTML / CSS / JavaScript)
+
 ⬇
 
 Nginx Reverse Proxy
+
 ⬇
 
 KrakenD API Gateway
+
 ⬇
 
 Backend (Node.js + Express + Knex)
+
 ⬇
 
 PostgreSQL Database
 
 Identity Provider:
+
 Keycloak (OpenID Connect)
 
 ---
 
-## 📦 Tech Stack
+# 📦 Tech Stack
 
-### Backend
+## Backend
 
 * Node.js
 * Express.js
@@ -71,50 +76,48 @@ Keycloak (OpenID Connect)
 * JWT
 * bcrypt
 
-### Frontend
+## Frontend
 
 * HTML
 * CSS
 * JavaScript
 
-### Identity & Security
+## Identity & Security
 
-* OAuth 2.0 Concepts
+* OAuth 2.0
 * OpenID Connect (OIDC)
 * Keycloak
 
-### Infrastructure
+## Infrastructure
 
 * Docker
 * Docker Compose
 * Nginx
 * KrakenD
 
-### Testing & Documentation
+## Testing & Documentation
 
 * Jest
 * Swagger
 
 ---
 
-## ⚙️ Setup & Run
-
-### Prerequisites
+# ⚙️ Prerequisites
 
 * Docker
 * Docker Compose
 
 ---
 
-## 🚀 Start the Application
+# 🚀 Start the Application
 
-### Linux / Mac
+## Linux / Mac
 
 ```bash
 ./start.sh
 ```
 
-### Windows
+## Windows
 
 ```bat
 start.bat
@@ -132,15 +135,15 @@ This will:
 
 ---
 
-## 🛑 Stop the Application
+# 🛑 Stop the Application
 
-### Linux / Mac
+## Linux / Mac
 
 ```bash
 ./stop.sh
 ```
 
-### Windows
+## Windows
 
 ```bat
 stop.bat
@@ -148,69 +151,87 @@ stop.bat
 
 ---
 
-## 🌐 Access the Services
+# 🌐 Access the Services
 
-### Frontend
-
-http://localhost:5500
-
-### Backend API
-
-http://localhost:5000
-
-### Swagger Documentation
-
-http://localhost:5000/api-docs
-
-### Keycloak
-
-http://localhost:8081
-
-### Nginx
-
-http://localhost:8080
-
-### KrakenD
-
-http://localhost:8090
+| Service     | URL                            |
+| ----------- | ------------------------------ |
+| Frontend    | http://localhost:5500          |
+| Backend API | http://localhost:5000          |
+| Swagger UI  | http://localhost:5000/api-docs |
+| Keycloak    | http://localhost:8081          |
+| Nginx       | http://localhost:8080          |
+| KrakenD     | http://localhost:8090          |
 
 ---
 
-## 🔐 Authentication Methods
+# 🔑 Demo Credentials
 
-### 1. JWT Authentication
+## Keycloak Admin Console
+
+URL:
+
+http://localhost:8081
+
+Username:
+
+admin
+
+Password:
+
+admin
+
+---
+
+## OpenID Connect Test User
+
+Username:
+
+hari
+
+Password:
+
+1234
+
+---
+
+## Testing OpenID Connect
+
+1. Open the Frontend:
+
+   ```
+   http://localhost:5500
+   ```
+
+2. Click:
+
+   ```
+   Login with Keycloak
+   ```
+
+3. Enter:
+
+   ```
+   Username: hari
+   Password: 1234
+   ```
+
+4. After successful authentication, Keycloak redirects back to the application using the OpenID Connect Authorization Code Flow.
+
+> Note: The Keycloak demo user is provided for evaluation purposes and can be modified through the Keycloak Admin Console.
+
+---
+
+# 🔐 Authentication Methods
+
+## 1. JWT Authentication Flow
 
 1. User enters email and password
 2. Backend validates credentials
 3. Password verified using bcrypt
 4. JWT token generated
-5. Token returned to client
+5. JWT token returned to client
 
-### 2. OpenID Connect Authentication
-
-1. User clicks **Login with Keycloak**
-2. User is redirected to Keycloak
-3. Keycloak authenticates the user
-4. Authorization Code is returned
-5. User identity is verified through OpenID Connect
-
----
-
-## 🧪 API Flow
-
-### Create Group
-
-```http
-POST /groups/create
-```
-
-### Create User
-
-```http
-POST /users/create
-```
-
-### Login
+### Example Login Request
 
 ```http
 POST /auth/login
@@ -226,25 +247,57 @@ POST /auth/login
 
 ---
 
-## 🗄 Database Schema
+## 2. OpenID Connect (OIDC) Flow
 
-### users
+1. User clicks **Login with Keycloak**
+2. User is redirected to Keycloak
+3. Keycloak authenticates the user
+4. Authorization Code is returned
+5. User identity is verified through OpenID Connect
+
+---
+
+# 🧪 API Flow
+
+## Create Group
+
+```http
+POST /groups/create
+```
+
+## Create User
+
+```http
+POST /users/create
+```
+
+## Login
+
+```http
+POST /auth/login
+```
+
+---
+
+# 🗄 Database Schema
+
+## users
 
 * id
 * email
 * password
 * group_id
 
-### groups
+## groups
 
 * id
 * name
 
-Database schema is automatically created using Knex migrations.
+Tables are automatically created using Knex migrations.
 
 ---
 
-## 📁 Project Structure
+# 📁 Project Structure
 
 ```text
 auth-system/
@@ -253,17 +306,20 @@ auth-system/
 │   ├── controllers/
 │   ├── routes/
 │   ├── models/
+│   ├── middleware/
 │   ├── migrations/
 │   ├── tests/
 │   ├── swagger.js
 │   ├── knexfile.js
-│   └── app.js
+│   ├── app.js
+│   └── server.js
 │
 ├── frontend/
 │   ├── index.html
 │   └── Dockerfile
 │
 ├── nginx/
+│
 ├── krakend/
 │
 ├── docker-compose.yml
@@ -276,7 +332,7 @@ auth-system/
 
 ---
 
-## 📌 Key Highlights
+# 📌 Key Highlights
 
 * OAuth 2.0 style JWT Authentication
 * OpenID Connect Integration using Keycloak
@@ -284,14 +340,14 @@ auth-system/
 * Generic Authentication Error Handling
 * Swagger API Documentation
 * Automated Unit Testing using Jest
-* Dockerized Microservice Architecture
+* Dockerized Architecture
 * Automatic Database Migrations
 * API Gateway using KrakenD
 * Reverse Proxy using Nginx
 
 ---
 
-## 🎯 Summary
+# 🎯 Summary
 
 This project demonstrates:
 
@@ -308,6 +364,6 @@ This project demonstrates:
 
 ---
 
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 **Haridharan B S**
