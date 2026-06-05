@@ -1,49 +1,105 @@
-# 🔐 OAuth 2.0 Authentication System
+# 🔐 OAuth 2.0 & OpenID Connect Authentication System
 
-A **fully containerized authentication system** with user management, group-based authorization, and JWT-based authentication.
-The system includes a frontend UI, backend API, and PostgreSQL database — all managed using Docker with **automatic database schema initialization using Knex migrations**.
+A **fully containerized authentication and authorization system** with user management, group-based authorization, JWT-based authentication, and OpenID Connect (OIDC) integration using Keycloak.
+
+The system includes a frontend UI, backend API, PostgreSQL database, API Gateway, reverse proxy, and Identity Provider — all managed using Docker with **automatic database schema initialization using Knex migrations**.
 
 ---
 
 ## 🚀 Features
 
+### Authentication & Authorization
+
 * 👤 User Management (Create users)
 * 👥 Group-based Authorization
 * 🔑 JWT Token Authentication
+* 🌐 OpenID Connect (OIDC) Integration using Keycloak
+* 🔒 Password Hashing using bcrypt
+* 🛡 Generic Authentication Error Messages
+
+### API & Documentation
+
+* 📄 Swagger API Documentation
+* 🧪 Unit Testing using Jest
+
+### Infrastructure
+
 * 🗄 PostgreSQL Database
-* 🐳 Fully Dockerized (Frontend + Backend + DB)
+* 🐳 Fully Dockerized
 * ⚡ One-command startup (Shell & Batch scripts)
 * 🔄 Automatic DB schema setup using Knex migrations
+* 🌍 Nginx Reverse Proxy
+* 🚪 KrakenD API Gateway
+
+### Frontend
+
 * 💻 Simple Frontend UI
+* 🔐 Login using JWT Authentication
+* 🌐 Login using OpenID Connect (Keycloak)
 
 ---
 
 ## 🏗️ Architecture
 
-Frontend (HTML/JS via Python server in Docker)
+Frontend (HTML / CSS / JavaScript)
 ⬇
+
+Nginx Reverse Proxy
+⬇
+
+KrakenD API Gateway
+⬇
+
 Backend (Node.js + Express + Knex)
 ⬇
+
 PostgreSQL Database
-⬇
-Docker (Containerized environment)
+
+Identity Provider:
+Keycloak (OpenID Connect)
 
 ---
 
 ## 📦 Tech Stack
 
-* Node.js (Express)
+### Backend
+
+* Node.js
+* Express.js
 * PostgreSQL
-* Knex.js (Query Builder & Migrations)
-* Docker & Docker Compose
-* HTML, CSS, JavaScript
-* Python (for frontend server inside Docker)
+* Knex.js
+* JWT
+* bcrypt
+
+### Frontend
+
+* HTML
+* CSS
+* JavaScript
+
+### Identity & Security
+
+* OAuth 2.0 Concepts
+* OpenID Connect (OIDC)
+* Keycloak
+
+### Infrastructure
+
+* Docker
+* Docker Compose
+* Nginx
+* KrakenD
+
+### Testing & Documentation
+
+* Jest
+* Swagger
 
 ---
 
 ## ⚙️ Setup & Run
 
-### 🔹 Prerequisites
+### Prerequisites
 
 * Docker
 * Docker Compose
@@ -52,41 +108,39 @@ Docker (Containerized environment)
 
 ## 🚀 Start the Application
 
-### 🐧 Linux / Mac
+### Linux / Mac
 
 ```bash
 ./start.sh
 ```
 
----
-
-### 🪟 Windows
+### Windows
 
 ```bat
 start.bat
 ```
 
----
+This will:
 
-👉 This will:
-
-* Start all containers (backend, database, frontend)
-* Automatically run database migrations
-* Open the frontend in browser
+* Start PostgreSQL
+* Start Backend API
+* Start Frontend
+* Start Nginx
+* Start KrakenD
+* Start Keycloak
+* Run Knex migrations automatically
 
 ---
 
 ## 🛑 Stop the Application
 
-### 🐧 Linux / Mac
+### Linux / Mac
 
 ```bash
 ./stop.sh
 ```
 
----
-
-### 🪟 Windows
+### Windows
 
 ```bat
 stop.bat
@@ -94,59 +148,81 @@ stop.bat
 
 ---
 
-## 🌐 Access the App
+## 🌐 Access the Services
 
-Frontend:
+### Frontend
 
-```
 http://localhost:5500
-```
 
-Backend API:
+### Backend API
 
-```
 http://localhost:5000
-```
+
+### Swagger Documentation
+
+http://localhost:5000/api-docs
+
+### Keycloak
+
+http://localhost:8081
+
+### Nginx
+
+http://localhost:8080
+
+### KrakenD
+
+http://localhost:8090
+
+---
+
+## 🔐 Authentication Methods
+
+### 1. JWT Authentication
+
+1. User enters email and password
+2. Backend validates credentials
+3. Password verified using bcrypt
+4. JWT token generated
+5. Token returned to client
+
+### 2. OpenID Connect Authentication
+
+1. User clicks **Login with Keycloak**
+2. User is redirected to Keycloak
+3. Keycloak authenticates the user
+4. Authorization Code is returned
+5. User identity is verified through OpenID Connect
 
 ---
 
 ## 🧪 API Flow
 
-### 1️⃣ Create Group
+### Create Group
 
-```
+```http
 POST /groups/create
 ```
 
-### 2️⃣ Create User
+### Create User
 
-```
+```http
 POST /users/create
 ```
 
-### 3️⃣ Login
+### Login
 
-```
+```http
 POST /auth/login
 ```
 
-### 4️⃣ Response
+### Example Response
 
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIs..."
 }
 ```
-
----
-
-## 🔐 Authentication Flow
-
-1. User is assigned to a group
-2. Password is hashed using bcrypt
-3. User logs in with credentials
-4. Backend validates credentials
-5. JWT token is generated and returned
 
 ---
 
@@ -157,20 +233,20 @@ POST /auth/login
 * id
 * email
 * password
-* group_id (foreign key)
+* group_id
 
 ### groups
 
 * id
 * name
 
-👉 Tables are automatically created using **Knex migrations**.
+Database schema is automatically created using Knex migrations.
 
 ---
 
 ## 📁 Project Structure
 
-```
+```text
 auth-system/
 │
 ├── backend/
@@ -178,12 +254,17 @@ auth-system/
 │   ├── routes/
 │   ├── models/
 │   ├── migrations/
+│   ├── tests/
+│   ├── swagger.js
 │   ├── knexfile.js
 │   └── app.js
 │
 ├── frontend/
 │   ├── index.html
 │   └── Dockerfile
+│
+├── nginx/
+├── krakend/
 │
 ├── docker-compose.yml
 ├── start.sh
@@ -197,25 +278,33 @@ auth-system/
 
 ## 📌 Key Highlights
 
-* Fully containerized system using Docker
-* Automatic database schema setup using migrations
-* Cross-platform support (Linux, Mac, Windows)
-* Automated startup using scripts
-* Clean Git repository using `.gitignore`
-* Demonstrates authentication & authorization concepts
+* OAuth 2.0 style JWT Authentication
+* OpenID Connect Integration using Keycloak
+* Secure Password Storage using bcrypt
+* Generic Authentication Error Handling
+* Swagger API Documentation
+* Automated Unit Testing using Jest
+* Dockerized Microservice Architecture
+* Automatic Database Migrations
+* API Gateway using KrakenD
+* Reverse Proxy using Nginx
 
 ---
 
 ## 🎯 Summary
 
-This project demonstrates a **complete authentication system** with:
+This project demonstrates:
 
-* User management
-* Group-based authorization
-* Secure login using JWT
-* Automatic database initialization
-* Docker-based deployment
-* Cross-platform automation
+* User Management
+* Group-based Authorization
+* JWT Authentication
+* OpenID Connect Authentication
+* API Documentation
+* Automated Testing
+* Docker-based Deployment
+* Database Migrations
+* API Gateway Integration
+* Reverse Proxy Configuration
 
 ---
 

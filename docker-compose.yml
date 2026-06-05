@@ -55,6 +55,23 @@ services:
       context: ./frontend
     ports:
       - "5500:5500"
+      
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
 
+    container_name: keycloak
+
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+    command: start-dev
+
+    ports:
+      - "8081:8080"
+
+    volumes:
+      - keycloak_data:/opt/keycloak/data
 volumes:
   pgdata:
+  keycloak_data:

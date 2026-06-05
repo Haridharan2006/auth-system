@@ -58,11 +58,20 @@
     <input id="loginEmail" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
+    <button onclick="loginWithKeycloak()">
+        Login with Keycloak
+    </button>
 
+    <div id="oidcResult"></div>
     <div id="loginResult"></div>
 </div>
-
+<script src="http://localhost:8081/js/keycloak.js"></script>
 <script>
+const keycloak = new Keycloak({
+    url: "http://localhost:8081",
+    realm: "auth-system",
+    clientId: "frontend-app"
+});
 async function createUser() {
     const email = document.getElementById("createEmail").value;
     const password = document.getElementById("createPassword").value;
@@ -110,6 +119,17 @@ async function login() {
         document.getElementById("loginResult").innerText =
             "Error: " + err.message;
     }
+}
+function loginWithKeycloak() {
+
+    const authUrl =
+        "http://localhost:8081/realms/auth-system/protocol/openid-connect/auth" +
+        "?client_id=frontend-app" +
+        "&response_type=code" +
+        "&scope=openid" +
+        "&redirect_uri=http://localhost:5500";
+
+    window.location.href = authUrl;
 }
 </script>
 
