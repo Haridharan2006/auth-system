@@ -1,7 +1,22 @@
 @echo off
-echo 🛑 Stopping Auth System...
+cls
 
-docker-compose down
+echo ========================================================
+echo Stopping Authentication System
+echo ========================================================
+echo.
 
-echo ✅ Application Stopped!
+docker compose version >nul 2>&1
+
+if errorlevel 1 (
+    docker-compose down
+) else (
+    docker compose down
+)
+
+echo.
+echo Containers stopped.
+
+docker ps
+
 pause

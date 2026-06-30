@@ -2,38 +2,42 @@
 cls
 
 echo ========================================================
-echo          Authentication System
+echo Reset Authentication System
 echo ========================================================
-echo.
-
-docker info >nul 2>&1
-
-if errorlevel 1 (
-    echo Docker is not running.
-    pause
-    exit
-)
-
-echo Starting containers...
 echo.
 
 docker compose version >nul 2>&1
 
 if errorlevel 1 (
-    docker-compose up -d
+    set compose=docker-compose
 ) else (
-    docker compose up -d
+    set compose=docker compose
 )
 
+%compose% down
+
 echo.
-echo Waiting for services...
+echo Removing stopped containers...
+docker container prune -f
+
+echo.
+echo Removing dangling images...
+docker image prune -f
+
+echo.
+echo Rebuilding...
+
+%compose% up --build -d
+
+echo.
+echo Waiting...
 timeout /t 10 >nul
 
 docker ps
 
 echo.
 echo ========================================================
-echo Authentication System Started
+echo Reset Complete
 echo ========================================================
 echo.
 echo Frontend : http://localhost:5500

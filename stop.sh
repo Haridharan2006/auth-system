@@ -1,7 +1,24 @@
 #!/bin/bash
 
-echo "🛑 Stopping application..."
+clear
 
-docker-compose down
+echo "========================================================"
+echo "Stopping Authentication System"
+echo "========================================================"
+echo
 
-echo "✅ Stopped!"
+if docker compose version >/dev/null 2>&1; then
+    COMPOSE="docker compose"
+else
+    COMPOSE="docker-compose"
+fi
+
+$COMPOSE down
+
+echo
+echo "✔ Containers stopped."
+
+docker ps
+
+echo
+echo "Done."

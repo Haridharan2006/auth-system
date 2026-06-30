@@ -1,137 +1,522 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Auth System</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .box {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            width: 300px;
-            text-align: center;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            margin: 8px 0;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #4facfe;
-            color: white;
-            border: none;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-        #createResult, #loginResult {
-            margin-top: 10px;
-            font-size: 12px;
-            word-wrap: break-word;
-        }
-    </style>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Authentication System</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
 </head>
 
 <body>
 
-<div class="box">
-    <h2>🔐 Auth System</h2>
+<div class="container">
 
-    <h3>Create User</h3>
-    <input id="createEmail" placeholder="Email">
-    <input id="createPassword" type="password" placeholder="Password">
-    <input id="createGroup" placeholder="Group ID">
-    <button onclick="createUser()">Create User</button>
+<div class="card">
 
-    <div id="createResult"></div>
+<div class="logo">
 
-    <h3>Login</h3>
-    <input id="loginEmail" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <button onclick="loginWithKeycloak()">
-        Login with Keycloak
-    </button>
+<i class="fa-solid fa-shield-halved"></i>
 
-    <div id="oidcResult"></div>
-    <div id="loginResult"></div>
 </div>
-<script src="http://localhost:8081/js/keycloak.js"></script>
+
+<h1>
+
+Authentication System
+
+</h1>
+
+<p class="subtitle">
+
+Secure Authentication using JWT & OpenID Connect
+
+</p>
+
+<!-- ========================= -->
+<!-- Create User -->
+<!-- ========================= -->
+
+<div class="section">
+
+<h3 class="section-title">
+
+<i class="fa-solid fa-user-plus"></i>
+
+Create User
+
+</h3>
+
+<div class="input-group">
+
+<label>
+
+Email
+
+</label>
+
+<input
+
+id="createEmail"
+
+type="email"
+
+placeholder="Enter email">
+
+</div>
+
+<div class="input-group">
+
+<label>
+
+Password
+
+</label>
+
+<input
+
+id="createPassword"
+
+type="password"
+
+placeholder="Enter password">
+
+</div>
+
+<div class="input-group">
+
+<label>
+
+Group ID
+
+</label>
+
+<input
+
+id="createGroup"
+
+type="number"
+
+placeholder="1 = Admin, 2 = Developer, 3 = User">
+
+</div>
+
+<button
+
+onclick="createUser()">
+
+<i class="fa-solid fa-user-plus"></i>
+
+Create User
+
+</button>
+
+<div
+
+id="createResult"
+
+class="message">
+
+</div>
+
+</div>
+
+<div class="divider">
+
+<span>
+
+OR
+
+</span>
+
+</div>
+
+<!-- ========================= -->
+<!-- Local Login -->
+<!-- ========================= -->
+
+<div class="section">
+
+<h3 class="section-title">
+
+<i class="fa-solid fa-right-to-bracket"></i>
+
+Local Login
+
+</h3>
+
+<div class="input-group">
+
+<label>
+
+Email
+
+</label>
+
+<input
+
+id="loginEmail"
+
+type="email"
+
+placeholder="Enter email">
+
+</div>
+
+<div class="input-group">
+
+<label>
+
+Password
+
+</label>
+
+<input
+
+id="loginPassword"
+
+type="password"
+
+placeholder="Enter password">
+
+</div>
+
+<button
+
+onclick="login()">
+
+<i class="fa-solid fa-lock"></i>
+
+Login
+
+</button>
+
+<div
+
+id="loginResult"
+
+class="message">
+
+</div>
+
+</div>
+
+<div class="divider">
+
+<span>
+
+OpenID Connect
+
+</span>
+
+</div>
+
+<!-- ========================= -->
+<!-- OpenID Providers -->
+<!-- ========================= -->
+
+<div class="section">
+
+<h3 class="section-title">
+
+<i class="fa-solid fa-key"></i>
+
+Identity Providers
+
+</h3>
+
+<div
+
+id="openidProviders">
+
+</div>
+
+</div>
+
+<div class="footer">
+
+Authentication System
+
+<br>
+
+Internship Project
+
+</div>
+
+</div>
+
+</div>
+
 <script>
-const keycloak = new Keycloak({
-    url: "http://localhost:8081",
-    realm: "auth-system",
-    clientId: "frontend-app"
-});
+
+// --------------------------------------------------
+// Already Logged In
+// --------------------------------------------------
+
+if (localStorage.getItem("token")) {
+
+    window.location.href =
+        "http://localhost:5500/dashboard.html";
+
+}
+
+// --------------------------------------------------
+// Helper
+// --------------------------------------------------
+
+function showMessage(id, message, color) {
+
+    const element =
+        document.getElementById(id);
+
+    element.innerText = message;
+
+    element.style.color = color;
+
+}
+
+// --------------------------------------------------
+// Create User
+// --------------------------------------------------
+
 async function createUser() {
-    const email = document.getElementById("createEmail").value;
-    const password = document.getElementById("createPassword").value;
-    const group_id = document.getElementById("createGroup").value;
+
+    const email =
+        document.getElementById("createEmail").value;
+
+    const password =
+        document.getElementById("createPassword").value;
+
+    const group_id =
+        Number(
+            document.getElementById("createGroup").value
+        );
 
     try {
-        const res = await fetch("http://127.0.0.1:5000/users/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email, password, group_id })
-        });
 
-        const data = await res.json();
+        const response =
+            await fetch(
+                "http://localhost:5000/users/create",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        group_id
+                    })
+                }
+            );
 
-        document.getElementById("createResult").innerText =
-            JSON.stringify(data, null, 2);
+        const data =
+            await response.json();
 
-    } catch (err) {
-        document.getElementById("createResult").innerText =
-            "Error: " + err.message;
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Unable to create user."
+            );
+
+        }
+
+        showMessage(
+            "createResult",
+            "✅ User created successfully.",
+            "green"
+        );
+
+        document.getElementById(
+            "createEmail"
+        ).value = "";
+
+        document.getElementById(
+            "createPassword"
+        ).value = "";
+
+        document.getElementById(
+            "createGroup"
+        ).value = "";
+
     }
+
+    catch (err) {
+
+        showMessage(
+            "createResult",
+            err.message,
+            "red"
+        );
+
+    }
+
 }
+
+// --------------------------------------------------
+// Local Login
+// --------------------------------------------------
 
 async function login() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+
+    const email =
+        document.getElementById(
+            "loginEmail"
+        ).value;
+
+    const password =
+        document.getElementById(
+            "loginPassword"
+        ).value;
 
     try {
-        const res = await fetch("http://127.0.0.1:5000/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email, password })
+
+        const response =
+            await fetch(
+                "http://localhost:5000/auth/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Invalid email or password."
+            );
+
+        }
+
+        localStorage.setItem(
+            "token",
+            data.token
+        );
+
+        window.location.href =
+            "http://localhost:5500/dashboard.html";
+
+    }
+
+    catch (err) {
+
+        showMessage(
+            "loginResult",
+            err.message,
+            "red"
+        );
+
+    }
+
+}
+
+// --------------------------------------------------
+// Load OpenID Providers
+// --------------------------------------------------
+
+async function loadOpenIDProviders() {
+
+    try {
+
+        const response =
+            await fetch(
+                "http://localhost:5000/openid/providers"
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load providers."
+            );
+
+        }
+
+        const providers =
+            await response.json();
+
+        const container =
+            document.getElementById(
+                "openidProviders"
+            );
+
+        container.innerHTML = "";
+
+        providers.forEach(provider => {
+
+            const button =
+                document.createElement("button");
+
+            button.className =
+                "provider-button";
+
+            button.innerHTML =
+                `<i class="fa-solid fa-key"></i> Login with ${provider.name}`;
+
+            button.onclick = () => {
+
+                window.location.href =
+                    "http://localhost:5000/openid/login/" +
+                    provider.name;
+
+            };
+
+            container.appendChild(button);
+
         });
 
-        const data = await res.json();
-
-        document.getElementById("loginResult").innerText =
-            JSON.stringify(data, null, 2);
-
-    } catch (err) {
-        document.getElementById("loginResult").innerText =
-            "Error: " + err.message;
     }
-}
-function loginWithKeycloak() {
 
-    const authUrl =
-        "http://localhost:8081/realms/auth-system/protocol/openid-connect/auth" +
-        "?client_id=frontend-app" +
-        "&response_type=code" +
-        "&scope=openid" +
-        "&redirect_uri=http://localhost:5500";
+    catch (err) {
 
-    window.location.href = authUrl;
+        console.error(err);
+
+        showMessage(
+            "loginResult",
+            "Unable to load OpenID providers.",
+            "red"
+        );
+
+    }
+
 }
+
+// --------------------------------------------------
+// Load Page
+// --------------------------------------------------
+
+window.onload = () => {
+
+    loadOpenIDProviders();
+
+};
+
 </script>
 
 </body>
+
 </html>

@@ -24,10 +24,17 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user.id, group_id: user.group_id },
-            "secretkey",
-            { expiresIn: "1h" }
-        );
+                {
+                    id: user.id,
+username: user.email.split("@")[0],
+email: user.email,
+group_id: user.group_id,
+login_type: "local"
+                },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: process.env.JWT_EXPIRES_IN
+                });
 
         res.json({ token });
 

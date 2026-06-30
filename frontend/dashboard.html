@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<div class="card">
+
+<div class="dashboard-header">
+
+<div class="logo">
+
+<i class="fa-solid fa-user-shield"></i>
+
+</div>
+
+<h2 id="welcome">
+
+Welcome
+
+</h2>
+
+<p>
+
+Authentication Successful
+
+</p>
+
+</div>
+
+<div class="info-card">
+
+<div class="info-title">
+
+<i class="fa-solid fa-user"></i>
+
+Username
+
+</div>
+
+<div
+
+id="username"
+
+class="info-value">
+
+Loading...
+
+</div>
+
+</div>
+
+<div class="info-card">
+
+<div class="info-title">
+
+<i class="fa-solid fa-envelope"></i>
+
+Email
+
+</div>
+
+<div
+
+id="email"
+
+class="info-value">
+
+Loading...
+
+</div>
+
+</div>
+
+<div class="info-card">
+
+<div class="info-title">
+
+<i class="fa-solid fa-users"></i>
+
+Role
+
+</div>
+
+<div
+
+id="group"
+
+class="info-value">
+
+Loading...
+
+</div>
+
+</div>
+
+<div class="info-card">
+
+<div class="info-title">
+
+<i class="fa-solid fa-key"></i>
+
+Authentication
+
+</div>
+
+<div
+
+id="loginType"
+
+class="badge badge-primary">
+
+Loading...
+
+</div>
+
+</div>
+
+<div class="info-card">
+
+<div class="info-title">
+
+<i class="fa-solid fa-circle-check"></i>
+
+Session Status
+
+</div>
+
+<div
+class="badge badge-success">
+
+Active
+
+</div>
+
+</div>
+
+<div class="info-card">
+
+<div class="info-title">
+
+<i class="fa-solid fa-shield-halved"></i>
+
+Security
+
+</div>
+
+<div class="info-value">
+
+JWT Protected
+
+</div>
+
+</div>
+<div class="info-card" style="display:block;">
+
+    <div class="info-title">
+
+        <i class="fa-solid fa-key"></i>
+
+        JWT Token
+
+    </div>
+
+    <textarea
+        id="jwtToken"
+        readonly
+        rows="5"
+        style="
+            width:100%;
+            margin-top:12px;
+            padding:12px;
+            border:1px solid #ddd;
+            border-radius:8px;
+            resize:none;
+            font-size:13px;
+            font-family:monospace;
+            background:#f8fafc;
+            color:#2563eb;
+            overflow:auto;
+        ">
+    </textarea>
+
+    <button
+        style="margin-top:12px;"
+        onclick="copyToken()">
+
+        <i class="fa-solid fa-copy"></i>
+
+        Copy Token
+
+    </button>
+
+</div>
+<button
+
+class="logout-btn"
+
+onclick="logout()">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+Logout
+
+</button>
+<button
+    class="logout-btn"
+    onclick="window.location.href='architecture.html'">
+
+    <i class="fa-solid fa-diagram-project"></i>
+
+    View System Architecture
+
+</button>
+
+<div class="footer">
+
+Authentication System
+
+<br>
+
+JWT • OpenID Connect • PostgreSQL • Docker • Keycloak
+
+</div>
+
+</div>
+
+<script src="dashboard.js"></script>
+
+</body>
+
+</html>
