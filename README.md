@@ -348,43 +348,43 @@ http://localhost:8090
 
 ## Login Page
 
-_Add screenshot here_
+![Login Page](screenshots/login-page.png)
 
 ---
 
 ## Dashboard
 
-_Add screenshot here_
-
----
-
-## JWT Token
-
-_Add screenshot here_
+![Dashboard](screenshots/dashboard.png)
 
 ---
 
 ## Keycloak Login
 
-_Add screenshot here_
+![Keycloak Login](screenshots/keycloak-login.png)
 
 ---
 
-## Swagger
+## Swagger API
 
-_Add screenshot here_
+![Swagger](screenshots/swagger.png)
+
+---
+
+## PostgreSQL Tables
+
+![Database](screenshots/postgres-tables.png)
 
 ---
 
 ## Docker Containers
 
-_Add screenshot here_
+![Docker](screenshots/docker-containers.png)
 
 ---
 
 ## Architecture
 
-_Add screenshot here_
+![Architecture](screenshots/architecture.png)
 
 ---
 
