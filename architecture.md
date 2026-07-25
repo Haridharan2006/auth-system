@@ -1,146 +1,210 @@
-# 🏗 Authentication System Architecture
+# System Architecture
 
-## Overview
+# Enterprise Authentication System
 
-The Authentication System is a secure web application that supports both **Local Authentication** and **OpenID Connect Authentication** using **Keycloak**. The application is containerized using Docker and uses PostgreSQL for persistent storage.
+This document describes the architecture of the Enterprise Authentication System and explains how the various components interact to provide secure authentication and authorization.
+
+---
+
+# Table of Contents
+
+- Overview
+- High-Level Architecture
+- Component Architecture
+- Authentication Architecture
+- Docker Architecture
+- Authentication Flows
+- JWT Authorization
+- Role-Based Access Control
+- Data Flow
+- Security Considerations
+- Future Enhancements
+
+---
+
+# Overview
+
+The Enterprise Authentication System is designed using a modular architecture that supports multiple authentication mechanisms while maintaining a common authorization model.
+
+The application provides:
+
+- Local Authentication
+- OpenID Connect Authentication
+- LDAP Authentication
+
+Regardless of the authentication mechanism used, authenticated users receive a JWT which is used for authorization throughout the application.
 
 ---
 
 # High-Level Architecture
 
-```
-                     +----------------------+
-                     |      Web Browser     |
-                     +----------+-----------+
-                                |
-                                |
-                                ▼
-                  +---------------------------+
-                  | Frontend (HTML/CSS/JS)    |
-                  +------------+--------------+
-                               |
-                               ▼
-                  +---------------------------+
-                  | Nginx Reverse Proxy       |
-                  +------------+--------------+
-                               |
-                               ▼
-                  +---------------------------+
-                  | KrakenD API Gateway       |
-                  +------------+--------------+
-                               |
-                               ▼
-                  +---------------------------+
-                  | Node.js / Express Backend |
-                  +------------+--------------+
-                     |                     |
-                     |                     |
-                     ▼                     ▼
-          +----------------+     +------------------+
-          | PostgreSQL DB  |     |    Keycloak      |
-          +----------------+     +------------------+
+```text
+                              +----------------------+
+                              |      Frontend        |
+                              | HTML • CSS • JS      |
+                              +----------+-----------+
+                                         |
+                                   HTTP REST APIs
+                                         |
+                              +----------v-----------+
+                              |   Node.js Backend    |
+                              |     Express.js       |
+                              +----------+-----------+
+                                         |
+          +-------------------------------+-------------------------------+
+          |                               |                               |
+          |                               |                               |
++---------v---------+           +---------v---------+           +----------v----------+
+|   PostgreSQL      |           |    Keycloak      |           |     OpenLDAP       |
+|  Local Users      |           | OpenID Connect   |           | LDAP Directory     |
++-------------------+           +------------------+           +--------------------+
+                                         |
+                                  JWT Generation
+                                         |
+                                  Protected Resources
 ```
 
 ---
 
-# Components
+# Component Architecture
 
 ## Frontend
 
-The frontend is developed using:
-
-- HTML5
-- CSS3
-- JavaScript
-
 Responsibilities:
 
-- User Registration
-- Local Login
-- OpenID Login
+- User Interface
+- Login Page
 - Dashboard
 - JWT Storage
-- Session Management
+- API Communication
+
+Technologies:
+
+- HTML
+- CSS
+- JavaScript
 
 ---
 
-## Nginx Reverse Proxy
-
-Nginx serves as the reverse proxy.
-
-Responsibilities:
-
-- Forward requests
-- Load balancing (future)
-- Secure routing
-
----
-
-## KrakenD API Gateway
-
-KrakenD acts as the API Gateway.
-
-Responsibilities:
-
-- Route APIs
-- Gateway Layer
-- Future API aggregation
-
----
-
-## Node.js Backend
-
-Built using:
-
-- Express.js
-- JWT
-- bcrypt
-- Knex.js
+## Backend
 
 Responsibilities:
 
 - User Authentication
 - JWT Generation
-- OpenID Integration
-- Group Mapping
-- Database Operations
+- User Management
+- LDAP Integration
+- OpenID Connect
+- Role Management
+
+Technologies:
+
+- Node.js
+- Express.js
 
 ---
 
 ## PostgreSQL
 
-Stores application data.
+Stores:
 
-Main Tables
-
-- users
-- groups
-- openid_providers
-- openid_group_mappings
+- Local Users
+- Password Hashes
+- User Groups
 
 ---
 
 ## Keycloak
 
-Identity Provider implementing OpenID Connect.
+Provides:
 
-Responsibilities
+- OpenID Connect Authentication
+- Identity Management
+- OAuth2 Authorization
 
-- User Authentication
-- Authorization Code Flow
-- ID Token Generation
-- User Groups
+---
+
+## OpenLDAP
+
+Provides:
+
+- LDAP Authentication
+- User Directory
+- Group Directory
+- Centralized Identity Management
+
+---
+
+# Docker Architecture
+
+The application is deployed using Docker Compose.
+
+```text
+                    Docker Compose
+
+        +-------------------------------+
+        |        frontend_server        |
+        +---------------+---------------+
+                        |
+                        |
+                        v
+        +-------------------------------+
+        |        node_backend           |
+        +---------------+---------------+
+                        |
+     +------------------+--------------------+
+     |                  |                    |
+     v                  v                    v
+
+postgres_db       keycloak         openldap_server
+                                         |
+                                         v
+                                  phpldapadmin
+
+                        |
+                        v
+
+                  nginx_server
+
+                        |
+                        v
+
+                krakend_gateway
+```
+
+---
+
+# Authentication Architecture
+
+The system supports three authentication mechanisms.
+
+```text
+                 Authentication System
+
+                  User Login
+                      |
+      +---------------+----------------+
+      |               |                |
+      |               |                |
+      v               v                v
+
+ Local Login     LDAP Login     OpenID Connect
+      |               |                |
+      +---------------+----------------+
+                      |
+                      v
+              JWT Authentication
+                      |
+                      v
+              Protected Resources
+```
 
 ---
 
 # Local Authentication Flow
 
-```
+```text
 User
-
-↓
-
-Enter Credentials
 
 ↓
 
@@ -148,15 +212,59 @@ Frontend
 
 ↓
 
-Backend
+POST /auth/login
 
 ↓
 
-Verify Password
+PostgreSQL
 
 ↓
 
-Generate JWT
+Password Verification
+
+↓
+
+JWT Generation
+
+↓
+
+Dashboard
+```
+
+---
+
+# LDAP Authentication Flow
+
+```text
+User
+
+↓
+
+Frontend
+
+↓
+
+POST /ldap/login
+
+↓
+
+OpenLDAP Bind
+
+↓
+
+Retrieve User
+
+↓
+
+Retrieve Groups
+
+↓
+
+Map Groups
+
+↓
+
+JWT Generation
 
 ↓
 
@@ -167,12 +275,12 @@ Dashboard
 
 # OpenID Connect Flow
 
-```
+```text
 User
 
 ↓
 
-Login with Keycloak
+Frontend
 
 ↓
 
@@ -184,23 +292,11 @@ Authorization Code
 
 ↓
 
-Backend
+Backend Callback
 
 ↓
 
-Token Exchange
-
-↓
-
-Receive ID Token
-
-↓
-
-Map User Group
-
-↓
-
-Generate Application JWT
+JWT Generation
 
 ↓
 
@@ -209,112 +305,101 @@ Dashboard
 
 ---
 
-# JWT Authentication
+# JWT Authorization
 
-After successful authentication:
+Every successful authentication generates a JWT containing:
 
-- Backend generates JWT
-- JWT stored in Browser Local Storage
-- Dashboard validates JWT
-- Session expiration checked
-
----
-
-# Security Features
-
-- Password Hashing (bcrypt)
-- JWT Authentication
-- OpenID Connect
-- Role Based Access Control
-- Session Expiration
-- Protected Dashboard
-
----
-
-# Role Mapping
-
-External Keycloak Groups
-
+```json
+{
+    "id": "...",
+    "username": "...",
+    "email": "...",
+    "group_id": 1,
+    "login_type": "local | ldap | openid"
+}
 ```
-Admin
-Developer
+
+The JWT is stored by the frontend and sent with subsequent API requests to access protected resources.
+
+---
+
+# Role-Based Access Control
+
+The application maps authenticated users to roles.
+
+| Group ID | Role |
+|----------|------|
+| 1 | Administrator |
+| 2 | Developer |
+| 3 | User |
+
+For LDAP-authenticated users, LDAP groups are mapped to these application roles before the JWT is generated.
+
+---
+
+# Data Flow
+
+```text
 User
-```
 
 ↓
 
-Mapped to
-
-```
-groups table
-```
-
-↓
-
-Application Permissions
-
----
-
-# Docker Deployment
-
-Containers
-
-```
 Frontend
 
-Backend
+↓
 
-PostgreSQL
+Authentication API
 
-Keycloak
+↓
 
-Nginx
+Authentication Provider
 
-KrakenD
+↓
+
+JWT
+
+↓
+
+Protected API
+
+↓
+
+Frontend Dashboard
 ```
 
 ---
 
-# Folder Structure
+# Security Considerations
 
-```
-backend/
+The application incorporates several security practices:
 
-frontend/
-
-krakend/
-
-nginx/
-
-docker-compose.yml
-```
-
----
-
-# Technologies
-
-- HTML5
-- CSS3
-- JavaScript
-- Node.js
-- Express.js
-- PostgreSQL
-- Knex.js
-- JWT
-- bcrypt
-- Keycloak
-- Docker
-- KrakenD
-- Nginx
-- Swagger
+- Password hashing using bcrypt
+- JWT-based authorization
+- OpenID Connect authentication
+- LDAP authentication
+- Secure role mapping
+- Docker container isolation
+- Reverse proxy using Nginx
+- API Gateway using KrakenD
 
 ---
 
-# Advantages
+# Future Enhancements
 
-- Secure Authentication
-- OpenID Connect Integration
-- Containerized Deployment
-- Role-Based Access Control
-- Modular Architecture
-- Scalable Design
+The architecture is designed to be extensible.
+
+Potential future improvements include:
+
+- Microsoft Active Directory integration
+- Multi-Factor Authentication (MFA)
+- Refresh Tokens
+- OAuth providers (Google, Microsoft, GitHub)
+- Fine-grained Role-Based Access Control
+- Audit Logging
+- High Availability Deployment
+
+---
+
+# Conclusion
+
+The Enterprise Authentication System follows a modular and extensible architecture that integrates multiple authentication mechanisms into a unified JWT-based authorization framework. By combining PostgreSQL, Keycloak, OpenLDAP, Docker, Nginx, and KrakenD, the system demonstrates enterprise authentication concepts while remaining flexible for future enhancements.
