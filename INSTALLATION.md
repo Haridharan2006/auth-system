@@ -1,22 +1,41 @@
-# 🚀 Installation Guide
+# Installation Guide
 
-This guide explains how to set up and run the Authentication System on a new machine.
+## Enterprise Authentication System
+
+This guide explains how to install and run the Enterprise Authentication System using Docker. The application supports Local Authentication, OpenID Connect (Keycloak), and LDAP Authentication (OpenLDAP).
+
+---
+
+# Table of Contents
+
+- Prerequisites
+- Clone the Repository
+- Project Structure
+- Environment Configuration
+- Running the Application
+- Startup Scripts
+- Manual Docker Commands
+- Accessing the Services
+- Default Credentials
+- Stopping the Application
+- Resetting the Environment
+- Troubleshooting
 
 ---
 
 # Prerequisites
 
-Make sure the following software is installed:
+Before running the project, ensure the following software is installed:
 
-- Docker Desktop (Windows/macOS) or Docker Engine (Linux)
+- Docker
 - Docker Compose
 - Git
 
-Verify the installation:
+Verify the installations:
 
 ```bash
 docker --version
-docker compose version
+docker-compose --version
 git --version
 ```
 
@@ -24,262 +43,370 @@ git --version
 
 # Clone the Repository
 
-```bash
-git clone https://github.com/<your-github-username>/auth-system.git
+Clone the repository from GitHub.
 
+```bash
+git clone <repository-url>
 cd auth-system
 ```
 
-Replace `<your-github-username>` with your GitHub username.
+Replace `<repository-url>` with your GitHub repository URL.
 
 ---
 
 # Project Structure
 
-```
+```text
 auth-system/
 │
 ├── backend/
 ├── frontend/
-├── krakend/
 ├── nginx/
+├── krakend/
+│
 ├── docker-compose.yml
-├── README.md
-└── ...
+│
+├── start.sh
+├── stop.sh
+├── reset.sh
+│
+├── start.bat
+├── stop.bat
+├── reset.bat
+│
+└── README.md
 ```
 
 ---
 
-# Configure Environment Variables
+# Environment Configuration
 
-Create a `.env` file inside the `backend` directory if it is not already present.
+Navigate to the backend directory.
+
+```bash
+cd backend
+```
+
+Create a `.env` file if one does not already exist.
 
 Example:
 
 ```env
 PORT=5000
 
+JWT_SECRET=your_secret_key
+
+JWT_EXPIRES_IN=1h
+
 DB_HOST=postgres
+
 DB_PORT=5432
+
 DB_USER=postgres
+
 DB_PASSWORD=postgres
+
 DB_NAME=authdb
 
-JWT_SECRET=your_super_secret_key
-JWT_EXPIRES_IN=1h
-```
+LDAP_URL=ldap://openldap:389
 
-> **Note:** The `.env` file should **not** be committed to GitHub.
+LDAP_BASE_DN=dc=authsystem,dc=local
+
+LDAP_USERS_DN=ou=users,dc=authsystem,dc=local
+
+LDAP_GROUPS_DN=ou=groups,dc=authsystem,dc=local
+
+LDAP_ADMIN_DN=cn=admin,dc=authsystem,dc=local
+
+LDAP_ADMIN_PASSWORD=admin
+```
 
 ---
 
-# Build and Start the Project
+# Running the Application
 
-From the project root directory, run:
+## Linux / macOS
 
-```bash
-docker compose up --build
-```
-
-Or, if using the helper script:
+Start all services.
 
 ```bash
 ./start.sh
 ```
 
-The first build may take several minutes as Docker downloads the required images.
+The script will:
+
+- Build Docker images
+- Start all containers
+- Run database migrations
+- Seed the database
+- Launch all services
 
 ---
 
-# Services
+## Windows
 
-After startup, the following services will be available:
+Run:
+
+```cmd
+start.bat
+```
+
+This performs the same operations as the Linux startup script.
+
+---
+
+# Manual Docker Commands
+
+If you prefer not to use the startup scripts:
+
+Build and start the application.
+
+```bash
+docker-compose up --build
+```
+
+Run in detached mode.
+
+```bash
+docker-compose up -d
+```
+
+View logs.
+
+```bash
+docker-compose logs -f
+```
+
+List running containers.
+
+```bash
+docker ps
+```
+
+---
+
+# Docker Services
+
+The following containers are started.
+
+| Container | Description |
+|------------|-------------|
+| frontend_server | Frontend Web Application |
+| node_backend | Express Backend API |
+| postgres_db | PostgreSQL Database |
+| keycloak | OpenID Connect Provider |
+| openldap_server | OpenLDAP Directory |
+| phpldapadmin | LDAP Administration |
+| nginx_server | Reverse Proxy |
+| krakend_gateway | API Gateway |
+
+---
+
+# Accessing the Services
 
 | Service | URL |
 |----------|-----|
 | Frontend | http://localhost:5500 |
 | Backend API | http://localhost:5000 |
 | Swagger | http://localhost:5000/api-docs |
-| Keycloak | http://localhost:8081 |
-| KrakenD Gateway | http://localhost:8090 |
 | PostgreSQL | localhost:5432 |
+| Keycloak | http://localhost:8081 |
+| phpLDAPadmin | http://localhost:8082 |
+| Nginx | http://localhost:8080 |
+| KrakenD | http://localhost:8090 |
 
 ---
 
-# Default Keycloak Credentials
+# Authentication Methods
 
-Administrator Login
+The application supports three authentication mechanisms.
 
+## Local Authentication
+
+Uses user credentials stored in PostgreSQL.
+
+---
+
+## OpenID Connect
+
+Uses Keycloak as the identity provider.
+
+---
+
+## LDAP Authentication
+
+Uses OpenLDAP for centralized user authentication.
+
+Users authenticate using their LDAP username and password.
+
+User groups are retrieved from LDAP and mapped to application roles before generating a JWT.
+
+---
+
+# Default LDAP Configuration
+
+Base DN
+
+```text
+dc=authsystem,dc=local
 ```
-Username: admin
-Password: admin
+
+Organizational Units
+
+```text
+ou=users
+
+ou=groups
 ```
 
-Example test user
+Example LDAP Groups
 
-```
-Username: hari
-Password: 1234
+```text
+admin
+
+developer
+
+user
 ```
 
 ---
 
-# Running Database Migrations
+# Default Credentials
 
-If migrations do not run automatically, execute:
+## PostgreSQL
 
-```bash
-docker exec -it node_backend npx knex migrate:latest
-```
-
----
-
-# Running Database Seeds
-
-If you need to insert the default data:
-
-```bash
-docker exec -it node_backend npx knex seed:run
-```
+| Field | Value |
+|--------|-------|
+| Username | postgres |
+| Password | postgres |
 
 ---
 
-# Verify Docker Containers
+## Keycloak
 
-```bash
-docker ps
-```
-
-Expected containers:
-
-- postgres_db
-- node_backend
-- frontend_server
-- keycloak
-- nginx_server
-- krakend_gateway
+| Field | Value |
+|--------|-------|
+| Username | admin |
+| Password | admin |
 
 ---
 
-# Stopping the Project
+## OpenLDAP
 
-Using Docker:
+| Field | Value |
+|--------|-------|
+| Admin DN | cn=admin,dc=authsystem,dc=local |
+| Password | admin |
 
-```bash
-docker compose down
-```
+---
 
-Or using the helper script:
+# Stopping the Application
+
+Linux/macOS
 
 ```bash
 ./stop.sh
 ```
 
----
+Windows
 
-# Common Issues
-
-## Docker is not running
-
-**Error**
-
-```
-Cannot connect to the Docker daemon
+```cmd
+stop.bat
 ```
 
-**Solution**
-
-Start Docker Desktop (Windows/macOS) or ensure the Docker service is running on Linux.
-
----
-
-## Port Already in Use
-
-**Error**
-
-```
-Bind for 0.0.0.0:5000 failed
-```
-
-**Solution**
-
-Stop the process using the port or change the port mapping in `docker-compose.yml`.
-
----
-
-## Database Connection Error
-
-Check that:
-
-- PostgreSQL container is running.
-- The `.env` values match `docker-compose.yml`.
-- `DB_HOST=postgres` when running inside Docker.
-
----
-
-## Keycloak Login Issues
-
-Verify:
-
-- Keycloak container is running.
-- The client configuration is correct.
-- Redirect URIs match the application URLs.
-- Group mappings exist in the database.
-
----
-
-# Updating the Project
-
-Pull the latest changes:
+Manual
 
 ```bash
-git pull
-```
-
-Rebuild the containers:
-
-```bash
-docker compose up --build
+docker-compose down
 ```
 
 ---
 
-# Project Verification Checklist
+# Resetting the Environment
 
-Before using the application, verify:
+Linux/macOS
 
-- [ ] Docker containers are running.
-- [ ] Frontend opens successfully.
-- [ ] Local Login works.
-- [ ] Keycloak Login works.
-- [ ] Dashboard loads correctly.
-- [ ] Logout redirects to the login page.
-- [ ] Swagger UI is accessible.
-- [ ] PostgreSQL is connected.
+```bash
+./reset.sh
+```
+
+Windows
+
+```cmd
+reset.bat
+```
+
+The reset script removes containers, networks, and volumes before rebuilding the application.
 
 ---
 
-# Need Help?
+# Troubleshooting
 
-If the project does not start:
+## Docker containers are not starting
 
-1. Check Docker logs.
-2. Verify `.env` values.
-3. Ensure all required ports are available.
-4. Rebuild the containers.
-
-Useful commands:
+Run:
 
 ```bash
-docker compose logs
+docker-compose logs
+```
 
+---
+
+## View running containers
+
+```bash
 docker ps
-
-docker compose restart
 ```
 
 ---
 
-# Successfully Installed
+## Restart the application
 
-If all services are running and the verification checklist passes, the Authentication System is ready to use.
+```bash
+docker-compose down
+docker-compose up --build
+```
+
+---
+
+## Verify LDAP
+
+```bash
+docker exec -it openldap_server ldapsearch \
+-x \
+-b "dc=authsystem,dc=local"
+```
+
+---
+
+## Verify PostgreSQL
+
+```bash
+docker exec -it postgres_db psql -U postgres
+```
+
+---
+
+## Verify Keycloak
+
+Open:
+
+```
+http://localhost:8081
+```
+
+---
+
+# Installation Complete
+
+If all services start successfully, open:
+
+```
+http://localhost:5500
+```
+
+You can now authenticate using:
+
+- Local Authentication
+- LDAP Authentication
+- OpenID Connect (Keycloak)
