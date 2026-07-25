@@ -1,6 +1,8 @@
-# 📡 API Documentation
+# API Documentation
 
-This document describes all the REST APIs available in the Authentication System.
+# Enterprise Authentication System
+
+This document describes all REST API endpoints provided by the Enterprise Authentication System.
 
 ---
 
@@ -12,50 +14,46 @@ http://localhost:5000
 
 ---
 
-# Authentication APIs
+# API Overview
 
-## 1. Local Login
+The backend provides APIs for:
 
-### Endpoint
+- User Management
+- Local Authentication
+- OpenID Connect Authentication
+- LDAP Authentication
+- JWT Authorization
+
+---
+
+# Authentication Flow
+
+The application supports three authentication methods.
 
 ```
-POST /auth/login
-```
-
-### Description
-
-Authenticates a user using email and password and returns a JWT.
-
-### Request Body
-
-```json
-{
-    "email":"hari@gmail.com",
-    "password":"1234"
-}
-```
-
-### Success Response
-
-```json
-{
-    "token":"eyJhbGc..."
-}
-```
-
-### Error Response
-
-```json
-{
-    "error":"Invalid username and/or password."
-}
+                User
+                  │
+      ┌───────────┼───────────┐
+      │           │           │
+      ▼           ▼           ▼
+  Local Login   LDAP Login   OpenID Login
+      │           │           │
+      └───────────┼───────────┘
+                  │
+                  ▼
+          JWT Authentication
+                  │
+                  ▼
+         Protected Resources
 ```
 
 ---
 
-# User APIs
+# User Management APIs
 
-## 2. Create User
+## Create User
+
+Creates a new local user in PostgreSQL.
 
 ### Endpoint
 
@@ -63,41 +61,147 @@ Authenticates a user using email and password and returns a JWT.
 POST /users/create
 ```
 
-### Description
-
-Creates a new user in the PostgreSQL database.
-
 ### Request Body
 
 ```json
 {
-    "email":"hari@gmail.com",
-    "password":"1234",
+    "email":"admin@gmail.com",
+    "password":"password123",
     "group_id":1
 }
 ```
 
-### Success Response
+### Successful Response
 
 ```json
 {
-    "message":"User created successfully."
+    "message":"User created successfully"
 }
 ```
 
-### Possible Errors
+### Error Response
 
 ```json
 {
-    "error":"User already exists."
+    "error":"User already exists"
 }
 ```
 
 ---
 
-# OpenID APIs
+# Local Authentication
 
-## 3. Get OpenID Providers
+Authenticates users stored in PostgreSQL.
+
+---
+
+## Login
+
+### Endpoint
+
+```
+POST /auth/login
+```
+
+### Request Body
+
+```json
+{
+    "email":"admin@gmail.com",
+    "password":"password123"
+}
+```
+
+### Successful Response
+
+```json
+{
+    "token":"JWT_TOKEN"
+}
+```
+
+### JWT Payload
+
+```json
+{
+    "id":1,
+    "username":"admin",
+    "email":"admin@gmail.com",
+    "group_id":1,
+    "login_type":"local"
+}
+```
+
+### Error Response
+
+```json
+{
+    "message":"Invalid username and/or password"
+}
+```
+
+---
+
+# LDAP Authentication
+
+Authenticates users stored in OpenLDAP.
+
+---
+
+## Login
+
+### Endpoint
+
+```
+POST /ldap/login
+```
+
+### Request Body
+
+```json
+{
+    "username":"hari",
+    "password":"1234"
+}
+```
+
+### Successful Response
+
+```json
+{
+    "token":"JWT_TOKEN"
+}
+```
+
+### JWT Payload
+
+```json
+{
+    "id":"hari",
+    "username":"hari",
+    "email":"hari@gmail.com",
+    "group_id":1,
+    "login_type":"ldap"
+}
+```
+
+### Error Response
+
+```json
+{
+    "message":"Invalid username and/or password"
+}
+```
+
+---
+
+# OpenID Connect
+
+Authentication is handled through Keycloak.
+
+---
+
+## Get Available Providers
 
 ### Endpoint
 
@@ -105,24 +209,19 @@ Creates a new user in the PostgreSQL database.
 GET /openid/providers
 ```
 
-### Description
-
-Returns all enabled OpenID Providers.
-
-### Success Response
+### Successful Response
 
 ```json
 [
     {
-        "id":1,
-        "name":"Keycloak"
+        "name":"keycloak"
     }
 ]
 ```
 
 ---
 
-## 4. Login with OpenID Provider
+## Login Using Provider
 
 ### Endpoint
 
@@ -130,197 +229,120 @@ Returns all enabled OpenID Providers.
 GET /openid/login/:provider
 ```
 
-### Example
+Example
 
 ```
-GET /openid/login/Keycloak
+GET /openid/login/keycloak
 ```
 
-### Description
-
-Redirects the user to the selected OpenID Provider.
-
-### Response
-
-Redirect
-
-```
-302 Redirect
-```
+The backend redirects the user to the selected identity provider.
 
 ---
 
-## 5. OpenID Callback
+## Callback
 
 ### Endpoint
 
 ```
-GET /openid/callback
+GET /openid/callback/:provider
 ```
 
-### Description
+After successful authentication:
 
-Handles the Authorization Code returned by Keycloak.
-
-Operations performed:
-
-- Exchanges Authorization Code
-- Receives ID Token
-- Reads User Information
-- Maps Keycloak Group
-- Generates Application JWT
-- Redirects to Dashboard
+- User information is retrieved.
+- JWT is generated.
+- User is redirected to the dashboard.
 
 ---
 
-# OpenID Group Mapping APIs
+# JWT Authentication
 
-## 6. Create Mapping
+After successful authentication, every user receives a JWT.
 
-### Endpoint
+Example Authorization header:
 
 ```
-POST /openid-group-mappings/create
-```
-
-### Description
-
-Creates a mapping between an external Keycloak group and an internal application group.
-
-### Request
-
-```json
-{
-    "provider_name":"Keycloak",
-    "external_group":"Admin",
-    "local_group_id":1
-}
-```
-
-### Success Response
-
-```json
-{
-    "message":"Mapping created successfully."
-}
+Authorization: Bearer <JWT_TOKEN>
 ```
 
 ---
 
-# Authentication Flow
+# User Roles
 
-## Local Login
-
-```
-Email + Password
-
-↓
-
-POST /auth/login
-
-↓
-
-JWT
-
-↓
-
-Dashboard
-```
+| Group ID | Role |
+|-----------|------|
+| 1 | Administrator |
+| 2 | Developer |
+| 3 | User |
 
 ---
 
-## OpenID Login
+# LDAP Group Mapping
 
-```
-GET /openid/login/Keycloak
-
-↓
-
-Keycloak Login
-
-↓
-
-Authorization Code
-
-↓
-
-GET /openid/callback
-
-↓
-
-Application JWT
-
-↓
-
-Dashboard
-```
-
----
-
-# JWT
-
-Example Payload
-
-```json
-{
-    "username":"hari",
-    "email":"hari@gmail.com",
-    "group_id":1,
-    "login_type":"openid",
-    "provider":"Keycloak",
-    "iat":1750000000,
-    "exp":1750003600
-}
-```
+| LDAP Group | Application Role |
+|------------|------------------|
+| admin | Administrator |
+| developer | Developer |
+| user | User |
 
 ---
 
 # HTTP Status Codes
 
-| Status Code | Meaning |
-|-------------|----------|
+| Status | Description |
+|----------|-------------|
 | 200 | Success |
 | 201 | Resource Created |
-| 302 | Redirect |
 | 400 | Bad Request |
 | 401 | Unauthorized |
-| 404 | Not Found |
+| 403 | Forbidden |
+| 404 | Resource Not Found |
 | 500 | Internal Server Error |
 
 ---
 
 # Swagger Documentation
 
-Swagger UI is available at
+Interactive API documentation is available at:
 
 ```
 http://localhost:5000/api-docs
 ```
 
-Swagger provides an interactive interface to test all available APIs.
+---
+
+# API Testing
+
+The APIs can be tested using:
+
+- Swagger UI
+- Postman
+- cURL
+
+Example:
+
+```bash
+curl -X POST http://localhost:5000/auth/login \
+-H "Content-Type: application/json" \
+-d '{
+    "email":"admin@gmail.com",
+    "password":"password123"
+}'
+```
 
 ---
 
-# API Summary
+# Security Features
 
-| Method | Endpoint | Purpose |
-|---------|----------|---------|
-| POST | /users/create | Create User |
-| POST | /auth/login | Local Login |
-| GET | /openid/providers | Get OpenID Providers |
-| GET | /openid/login/:provider | Login with Keycloak |
-| GET | /openid/callback | OpenID Callback |
-| POST | /openid-group-mappings/create | Create Group Mapping |
+- Password hashing using bcrypt
+- JWT-based authentication
+- OpenID Connect support
+- LDAP authentication
+- Role-Based Access Control
+- Dockerized deployment
 
 ---
 
-# Future Improvements
+# Summary
 
-- Refresh Tokens
-- Google OAuth 2.0
-- Microsoft Azure AD
-- User Profile APIs
-- Admin APIs
-- MFA Support
-- Rate Limiting
-- API Versioning
+The Enterprise Authentication System exposes REST APIs that support multiple authentication mechanisms while maintaining a unified JWT-based authorization model. Local Authentication, OpenID Connect, and LDAP Authentication all generate JWTs with a consistent payload structure, enabling secure access to protected resources.
