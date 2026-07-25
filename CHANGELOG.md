@@ -1,6 +1,182 @@
-# 📜 Changelog
+# Changelog
 
-All notable changes to the Authentication System are documented in this file.
+All notable changes to the Enterprise Authentication System are documented in this file.
+
+This project follows a version-based changelog format.
+
+---
+
+# Version 2.0.0 (Current Release)
+
+Release Date: July 2026
+
+## Overview
+
+This release transforms the project into a complete enterprise authentication platform supporting multiple authentication mechanisms through a unified JWT-based authorization model.
+
+---
+
+## Added
+
+### Local Authentication
+
+- User registration
+- Secure login using PostgreSQL
+- Password hashing with bcrypt
+- JWT generation
+- Role-based authorization
+
+---
+
+### OpenID Connect Authentication
+
+- Integrated Keycloak as the Identity Provider
+- OpenID Connect login flow
+- Provider-based authentication
+- JWT generation after successful authentication
+
+---
+
+### LDAP Authentication
+
+- Integrated OpenLDAP
+- LDAP user authentication
+- LDAP group retrieval
+- LDAP role mapping
+- JWT generation for LDAP users
+- LDAP login endpoint
+- Frontend LDAP login support
+
+---
+
+### User Management
+
+- Create User API
+- User validation
+- Duplicate user detection
+- Group assignment
+
+---
+
+### Docker Support
+
+Containerized all application services.
+
+Added Docker support for:
+
+- Frontend
+- Backend
+- PostgreSQL
+- Keycloak
+- OpenLDAP
+- phpLDAPadmin
+- Nginx
+- KrakenD
+
+---
+
+### API Gateway
+
+Integrated KrakenD.
+
+Features:
+
+- API routing
+- Centralized endpoint management
+- Gateway architecture
+
+---
+
+### Reverse Proxy
+
+Integrated Nginx.
+
+Provides:
+
+- Reverse proxy
+- Request forwarding
+- Improved deployment architecture
+
+---
+
+### API Documentation
+
+Added Swagger UI.
+
+Provides:
+
+- Interactive API documentation
+- Endpoint testing
+- Request/Response examples
+
+---
+
+### Cross-Platform Startup Scripts
+
+Linux/macOS
+
+- start.sh
+- stop.sh
+- reset.sh
+
+Windows
+
+- start.bat
+- stop.bat
+- reset.bat
+
+---
+
+## Improved
+
+### Authentication
+
+- Unified authentication workflow
+- Common JWT payload for all login methods
+- Improved login validation
+- Better error handling
+
+---
+
+### Security
+
+- Password hashing using bcrypt
+- JWT authorization
+- OpenID Connect integration
+- LDAP authentication
+- Secure role mapping
+
+---
+
+### Backend
+
+- Improved project structure
+- Modular controllers
+- Service-based LDAP integration
+- Cleaner route organization
+- Better environment variable management
+
+---
+
+### Frontend
+
+- Support for multiple authentication methods
+- Improved login interface
+- Dashboard enhancements
+- Authentication method display
+- Better user experience
+
+---
+
+## Fixed
+
+- Docker startup issues
+- Authentication validation bugs
+- JWT payload consistency
+- LDAP authentication errors
+- Group mapping issues
+- Environment configuration problems
+- Backend dependency updates
 
 ---
 
@@ -8,154 +184,93 @@ All notable changes to the Authentication System are documented in this file.
 
 ## Initial Release
 
-### Authentication
+The first release of the Enterprise Authentication System.
 
-- Implemented Local Authentication
-- Added JWT-based Authentication
-- Added bcrypt Password Hashing
-- Implemented Logout Functionality
-- Added Session Expiration Validation
+### Features
 
----
-
-### User Management
-
-- User Registration
-- PostgreSQL User Storage
-- Role Assignment using Groups
+- Local Authentication
+- PostgreSQL integration
+- JWT Authentication
+- User Management
+- Dockerized deployment
+- Express.js backend
+- HTML/CSS/JavaScript frontend
 
 ---
 
-### OpenID Connect
+# Technology Stack
 
-- Integrated Keycloak
-- Implemented Authorization Code Flow
-- Added OpenID Provider Management
-- Dynamic OpenID Provider Loading
-- Token Exchange
-- ID Token Processing
-
----
-
-### Authorization
-
-- Added Group Mapping
-- Implemented Role-Based Access Control (RBAC)
-- Mapped External Keycloak Groups to Local Application Groups
-
----
-
-### Dashboard
-
-- Added Modern Responsive Dashboard
-- Display Username
-- Display Email
-- Display Role
-- Display Authentication Type
-- Display Session Status
-- Display JWT Token
-- Added Copy JWT Functionality
-- Added Logout
-
----
-
-### User Interface
-
-- Redesigned Login Page
-- Modern Glassmorphism UI
-- Responsive Design
-- Gradient Background
-- Professional Dashboard
-- Improved User Experience
-- Added Font Awesome Icons
-- Added Architecture Page
-
----
-
-### Backend
+Backend
 
 - Node.js
 - Express.js
-- JWT Authentication
-- bcrypt Password Hashing
-- Knex.js Migrations
-- Knex.js Seeds
 
----
+Frontend
 
-### Database
+- HTML
+- CSS
+- JavaScript
 
-- PostgreSQL Integration
-- Users Table
-- Groups Table
-- OpenID Providers Table
-- OpenID Group Mappings Table
+Database
 
----
+- PostgreSQL
 
-### Infrastructure
+Authentication
+
+- JWT
+- OpenID Connect (Keycloak)
+- LDAP (OpenLDAP)
+
+Infrastructure
 
 - Docker
 - Docker Compose
-- Nginx Reverse Proxy
-- KrakenD API Gateway
+- Nginx
+- KrakenD
+
+Documentation
+
+- Swagger UI
 
 ---
 
-### Documentation
+# Future Roadmap
 
-- README.md
-- ARCHITECTURE.md
-- API_DOCUMENTATION.md
-- INSTALLATION.md
-- DEMO.md
-- CHANGELOG.md
+The following enhancements are planned for future releases.
 
----
+## Version 2.1
 
-### Testing
-
-Successfully Tested
-
-- Local Login
-- User Registration
-- JWT Generation
-- Logout
-- Dashboard
-- OpenID Login
-- Keycloak Authentication
-- Group Mapping
-- Docker Deployment
-- PostgreSQL Connectivity
-- Swagger API Documentation
-
----
-
-# Planned Future Releases
-
-## Version 1.1
-
-- Google OAuth 2.0 Login
 - Refresh Tokens
-- Admin Dashboard
-- User Profile Management
-- Better Error Handling
-
----
-
-## Version 1.2
-
-- Microsoft Azure AD Login
 - Password Reset
 - Email Verification
-- User Profile Pictures
+- User Profile Management
 
 ---
 
-## Version 2.0
+## Version 2.2
 
 - Multi-Factor Authentication (MFA)
-- Audit Logs
-- Redis Session Management
-- Kubernetes Deployment
-- CI/CD Pipeline
+- Google Authentication
+- Microsoft Authentication
+- GitHub Authentication
+
+---
+
+## Version 3.0
+
+- Active Directory Integration
+- Audit Logging
+- Session Management
+- Fine-Grained Role-Based Access Control
+- High Availability Deployment
+- Kubernetes Support
+
+---
+
+# Contributors
+
+Developed as part of an enterprise authentication system project.
+
+---
+
+# End of Changelog
