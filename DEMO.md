@@ -1,241 +1,54 @@
-# 🎤 Authentication System Demo Guide
+# Demonstration Guide
 
-This document provides a structured walkthrough for demonstrating the Authentication System.
+# Enterprise Authentication System
 
----
+This document provides a step-by-step guide for demonstrating the Enterprise Authentication System. The application supports three authentication methods:
 
-# Project Overview
+- Local Authentication
+- LDAP Authentication
+- OpenID Connect (Keycloak)
 
-Good morning/afternoon everyone.
-
-Today I am presenting my **Authentication System** developed using:
-
-- Node.js
-- Express.js
-- PostgreSQL
-- JWT
-- Keycloak
-- OpenID Connect
-- Docker
-- KrakenD API Gateway
-- Nginx Reverse Proxy
-
-The application supports both **Local Authentication** and **OpenID Connect Authentication** with Role-Based Access Control (RBAC).
+The guide also includes verification steps for Docker services, API documentation, and role-based access control.
 
 ---
 
-# Demonstration Flow
+# Demonstration Objectives
 
-Follow the steps below during the presentation.
+During the demonstration, the following features will be presented:
 
----
-
-# Step 1 - Project Architecture
-
-Open the **System Architecture** page.
-
-Explain the architecture:
-
-```
-Browser
-
-↓
-
-Frontend
-
-↓
-
-Nginx
-
-↓
-
-KrakenD
-
-↓
-
-Node Backend
-
-↙            ↘
-
-PostgreSQL   Keycloak
-```
-
-Mention:
-
-- Frontend handles user interaction.
-- Nginx acts as a reverse proxy.
-- KrakenD acts as the API Gateway.
-- Node.js implements business logic.
-- PostgreSQL stores user data.
-- Keycloak provides OpenID Connect authentication.
+- Dockerized deployment
+- Local Authentication
+- LDAP Authentication
+- OpenID Connect Authentication
+- JWT-based Authorization
+- Role-Based Access Control
+- Swagger API Documentation
 
 ---
 
-# Step 2 - Local User Creation
+# Step 1 – Start the Application
 
-Navigate to the Login Page.
+## Linux/macOS
 
-Create a new user.
-
-Example:
-
-```
-Email
-
-hari@gmail.com
-
-Password
-
-1234
-
-Group ID
-
-1
+```bash
+./start.sh
 ```
 
-Click **Create User**.
+## Windows
 
-Explain:
+```cmd
+start.bat
+```
 
-- Password is hashed using bcrypt.
-- User is stored in PostgreSQL.
-- Group ID determines authorization level.
+Alternatively, start manually using Docker Compose.
+
+```bash
+docker-compose up --build
+```
 
 ---
 
-# Step 3 - Local Login
-
-Login using:
-
-```
-hari@gmail.com
-
-1234
-```
-
-Explain:
-
-- Backend validates credentials.
-- JWT is generated.
-- JWT is stored in Local Storage.
-- Dashboard is opened.
-
----
-
-# Step 4 - JWT Token
-
-Navigate to the Dashboard.
-
-Show:
-
-- Username
-- Email
-- Role
-- Login Type
-- JWT Token
-
-Explain:
-
-The application generates its own JWT after successful authentication.
-
-The JWT is used for session management and authorization.
-
----
-
-# Step 5 - Logout
-
-Click **Logout**.
-
-Explain:
-
-- JWT removed from browser.
-- User redirected to Login Page.
-
----
-
-# Step 6 - Keycloak Login
-
-Click
-
-```
-Login with Keycloak
-```
-
-Login using:
-
-```
-Username
-
-hari
-
-Password
-
-1234
-```
-
-Explain:
-
-- User redirected to Keycloak.
-- OpenID Connect Authorization Code Flow begins.
-- Keycloak authenticates user.
-- Backend exchanges Authorization Code for ID Token.
-- Backend generates Application JWT.
-- Dashboard opens.
-
----
-
-# Step 7 - Group Mapping
-
-Explain:
-
-External Groups
-
-```
-Admin
-
-Developer
-
-User
-```
-
-↓
-
-Mapped to
-
-```
-groups
-```
-
-↓
-
-Application Role
-
-This allows external identity providers to integrate with the application.
-
----
-
-# Step 8 - Swagger
-
-Open:
-
-```
-http://localhost:5000/api-docs
-```
-
-Explain:
-
-Swagger documents all REST APIs.
-
-Show:
-
-- Local Login API
-- User Creation API
-- OpenID APIs
-- Group Mapping APIs
-
----
-
-# Step 9 - Docker
+# Step 2 – Verify Docker Containers
 
 Run:
 
@@ -243,141 +56,277 @@ Run:
 docker ps
 ```
 
-Explain:
+The following containers should be running.
 
-Containers:
-
-- PostgreSQL
-- Backend
-- Frontend
-- Keycloak
-- KrakenD
-- Nginx
-
----
-
-# Step 10 - PostgreSQL
-
-Show PostgreSQL tables.
-
-Explain:
-
-Main tables:
-
-- users
-- groups
-- openid_providers
-- openid_group_mappings
+| Container | Status |
+|------------|--------|
+| frontend_server | Running |
+| node_backend | Running |
+| postgres_db | Running |
+| keycloak | Running |
+| openldap_server | Running |
+| phpldapadmin | Running |
+| nginx_server | Running |
+| krakend_gateway | Running |
 
 ---
 
-# Features Demonstrated
+# Step 3 – Open the Application
 
-✔ Local Authentication
+Navigate to:
 
-✔ JWT Authentication
+```
+http://localhost:5500
+```
 
-✔ OpenID Connect
+The login page should display:
 
-✔ Keycloak Integration
-
-✔ Role-Based Access Control
-
-✔ Docker Deployment
-
-✔ PostgreSQL Integration
-
-✔ KrakenD API Gateway
-
-✔ Nginx Reverse Proxy
-
-✔ Swagger Documentation
+- Create User section
+- Authentication Method selection
+- Local Authentication
+- LDAP Authentication
+- OpenID Connect providers
 
 ---
 
-# Questions You May Be Asked
+# Step 4 – Demonstrate Local Authentication
 
-## Why JWT?
+## Create a Local User
 
-JWT enables stateless authentication.
+Create a new user using the **Create User** section.
 
-The server does not need to store user sessions.
+Example:
 
----
+Email
 
-## Why bcrypt?
+```
+admin@gmail.com
+```
 
-Passwords are never stored in plain text.
+Password
 
-bcrypt securely hashes passwords.
+```
+password123
+```
 
----
+Group ID
 
-## Why PostgreSQL?
+```
+1
+```
 
-Provides reliable relational storage and supports foreign keys for data integrity.
+Click **Create User**.
 
----
+Expected Result:
 
-## Why Keycloak?
-
-Keycloak implements OpenID Connect and centralizes identity management.
-
----
-
-## Why OpenID Connect?
-
-Allows users to authenticate through a trusted Identity Provider.
+- User created successfully.
 
 ---
 
-## Why Docker?
+## Login
 
-Docker ensures the application runs consistently across different environments.
+Select:
 
----
+```
+Local Authentication
+```
 
-## Why KrakenD?
+Login using:
 
-KrakenD serves as an API Gateway and provides a single entry point for backend APIs.
+```
+Email:
+admin@gmail.com
 
----
+Password:
+password123
+```
 
-## Why Nginx?
+Expected Result:
 
-Nginx acts as a reverse proxy and can improve scalability and request routing.
-
----
-
-# Project Outcome
-
-Successfully implemented:
-
-- Secure Authentication
-- Role-Based Authorization
-- JWT Session Management
-- OpenID Connect Authentication
-- Dockerized Deployment
-- API Documentation
-- Modern Responsive UI
+- Login successful
+- Dashboard opens
+- JWT generated
+- Login Type displays **Local**
+- User role displayed correctly
 
 ---
 
-# Future Enhancements
+# Step 5 – Demonstrate LDAP Authentication
 
-- Google OAuth 2.0
-- Microsoft Azure AD
-- Refresh Tokens
-- Multi-Factor Authentication
-- Email Verification
-- Password Reset
-- Admin Dashboard
-- Audit Logs
+Select:
+
+```
+LDAP Authentication
+```
+
+The login field changes from **Email** to **Username**.
+
+Login using an LDAP account.
+
+Example:
+
+```
+Username:
+hari
+
+Password:
+1234
+```
+
+Expected Result:
+
+- LDAP authentication successful
+- User retrieved from OpenLDAP
+- LDAP groups retrieved
+- Groups mapped to application roles
+- JWT generated
+- Dashboard displayed
+- Login Type displays **LDAP**
 
 ---
 
-# Thank You
+# Step 6 – Demonstrate OpenID Connect
 
-Thank you for your time.
+Return to the login page.
 
-I would be happy to answer any questions regarding the implementation or architecture.
+Select:
+
+```
+Login with Keycloak
+```
+
+The application redirects to the Keycloak login page.
+
+Login using a configured Keycloak user.
+
+Expected Result:
+
+- Authentication successful
+- Redirect back to the application
+- JWT generated
+- Dashboard displayed
+- Login Type displays **Keycloak**
+
+---
+
+# Step 7 – Dashboard Demonstration
+
+After authentication, demonstrate the dashboard.
+
+Verify that the dashboard displays:
+
+- Username
+- Email
+- Role
+- Login Type
+- JWT Token
+
+Demonstrate:
+
+- Copy JWT Token
+- Logout functionality
+
+---
+
+# Step 8 – Swagger Documentation
+
+Open:
+
+```
+http://localhost:5000/api-docs
+```
+
+Demonstrate:
+
+- Local Authentication API
+- LDAP Authentication API
+- User Creation API
+- OpenID APIs
+
+Execute one API request directly from Swagger.
+
+---
+
+# Step 9 – phpLDAPadmin
+
+Open:
+
+```
+http://localhost:8082
+```
+
+Login using:
+
+Administrator DN
+
+```
+cn=admin,dc=authsystem,dc=local
+```
+
+Password
+
+```
+admin
+```
+
+Demonstrate:
+
+- LDAP directory
+- Users
+- Groups
+
+Explain that LDAP users are managed separately from local database users.
+
+---
+
+# Step 10 – Docker Deployment
+
+Explain the containerized architecture.
+
+Containers used:
+
+- frontend_server
+- node_backend
+- postgres_db
+- keycloak
+- openldap_server
+- phpldapadmin
+- nginx_server
+- krakend_gateway
+
+Explain the purpose of each service.
+
+---
+
+# Step 11 – Authentication Summary
+
+The application supports three authentication mechanisms.
+
+| Authentication Method | Backend | JWT Generated |
+|-----------------------|---------|---------------|
+| Local Authentication | PostgreSQL | Yes |
+| LDAP Authentication | OpenLDAP | Yes |
+| OpenID Connect | Keycloak | Yes |
+
+All authentication methods generate a JWT with a common structure, enabling consistent authorization across the application.
+
+---
+
+# Expected Demonstration Outcome
+
+At the end of the demonstration, the evaluator should observe:
+
+- Successful Docker deployment
+- Successful Local Authentication
+- Successful LDAP Authentication
+- Successful OpenID Connect Authentication
+- JWT generation
+- Role-Based Access Control
+- Swagger API documentation
+- Unified authentication workflow
+
+---
+
+# Demonstration Complete
+
+The Enterprise Authentication System successfully demonstrates a secure, enterprise-style authentication platform integrating Local Authentication, OpenID Connect, and LDAP Authentication into a unified JWT-based authorization framework.
