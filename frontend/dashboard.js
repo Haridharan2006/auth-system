@@ -133,13 +133,32 @@ document.getElementById("group").innerText =
 // Login Type
 // ------------------------------
 
+let loginMethod = "Local";
+
+switch (payload.login_type) {
+
+    case "openid":
+
+        loginMethod = "Keycloak";
+
+        break;
+
+    case "ldap":
+
+        loginMethod = "LDAP";
+
+        break;
+
+    case "local":
+
+        loginMethod = "Local";
+
+        break;
+
+}
+
 document.getElementById("loginType").innerText =
-
-    payload.login_type === "openid"
-
-        ? "Keycloak"
-
-        : "Local";
+    loginMethod;
 // ------------------------------
 // Show JWT Token
 // ------------------------------

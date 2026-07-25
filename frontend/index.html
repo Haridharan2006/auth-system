@@ -153,24 +153,56 @@ OR
 
 <i class="fa-solid fa-right-to-bracket"></i>
 
-Local Login
+Login
 
 </h3>
+<div class="input-group">
+
 
 <div class="input-group">
 
-<label>
+    <label>Authentication Type</label>
+
+    <div class="auth-toggle">
+
+        <button
+            type="button"
+            id="localBtn"
+            class="auth-btn active"
+            onclick="setLoginType('local')">
+
+            <i class="fa-solid fa-user"></i>
+            Local
+
+        </button>
+
+        <button
+            type="button"
+            id="ldapBtn"
+            class="auth-btn"
+            onclick="setLoginType('ldap')">
+
+            <i class="fa-solid fa-network-wired"></i>
+            LDAP
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+<div class="input-group">
+
+<label id="loginLabel">
 
 Email
 
 </label>
 
 <input
-
 id="loginEmail"
-
-type="email"
-
+type="text"
 placeholder="Enter email">
 
 </div>
@@ -373,33 +405,58 @@ async function createUser() {
 
 async function login() {
 
-    const email =
-        document.getElementById(
-            "loginEmail"
-        ).value;
+    const type = loginType;
+
+    const username =
+        document.getElementById("loginEmail").value;
 
     const password =
-        document.getElementById(
-            "loginPassword"
-        ).value;
+        document.getElementById("loginPassword").value;
+
+    let url;
+
+    let body;
+
+    if (type === "ldap") {
+
+        url =
+            "http://localhost:5000/ldap/login";
+
+        body = {
+            username,
+            password
+        };
+
+    }
+    else {
+
+        url =
+            "http://localhost:5000/auth/login";
+
+        body = {
+            email: username,
+            password
+        };
+
+    }
 
     try {
 
         const response =
-            await fetch(
-                "http://localhost:5000/auth/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password
-                    })
-                }
-            );
+            await fetch(url, {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+                body: JSON.stringify(body)
+
+            });
 
         const data =
             await response.json();
@@ -407,8 +464,9 @@ async function login() {
         if (!response.ok) {
 
             throw new Error(
+                data.message ||
                 data.error ||
-                "Invalid email or password."
+                "Login failed."
             );
 
         }
@@ -508,7 +566,45 @@ async function loadOpenIDProviders() {
 // --------------------------------------------------
 // Load Page
 // --------------------------------------------------
+document
+.getElementById("loginType")
+let loginType = "local";
 
+function setLoginType(type){
+
+    loginType = type;
+
+    document
+        .getElementById("localBtn")
+        .classList
+        .toggle("active", type==="local");
+
+    document
+        .getElementById("ldapBtn")
+        .classList
+        .toggle("active", type==="ldap");
+
+    const label =
+        document.getElementById("loginLabel");
+
+    const input =
+        document.getElementById("loginEmail");
+
+    if(type==="ldap"){
+
+        label.innerText="Username";
+
+        input.placeholder="Enter LDAP username";
+
+    }else{
+
+        label.innerText="Email";
+
+        input.placeholder="Enter email";
+
+    }
+
+}
 window.onload = () => {
 
     loadOpenIDProviders();

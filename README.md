@@ -1,411 +1,288 @@
-# 🔐 Authentication System using JWT, OpenID Connect & Keycloak
+# Authentication System
 
-A secure authentication and authorization system developed using **Node.js**, **Express.js**, **PostgreSQL**, **JWT**, **Keycloak**, **Docker**, **KrakenD API Gateway**, and **Nginx Reverse Proxy**.
-
-This project demonstrates both **Local Authentication** and **OpenID Connect Authentication** using Keycloak while implementing **Role-Based Access Control (RBAC)** through group mapping.
+A secure enterprise-grade authentication system supporting multiple authentication mechanisms including **Local Authentication**, **OpenID Connect (Keycloak)**, and **LDAP Authentication (OpenLDAP)**. The system uses JWT for secure authorization and is fully containerized using Docker.
 
 ---
 
-# 📌 Features
+## Table of Contents
 
-## Local Authentication
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [System Architecture](#system-architecture)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Authentication Methods](#authentication-methods)
+- [Docker Services](#docker-services)
+- [Installation](#installation)
+- [Running the Project](#running-the-project)
+- [API Documentation](#api-documentation)
+- [Default Service URLs](#default-service-urls)
+- [Future Enhancements](#future-enhancements)
+- [Author](#author)
 
-- User Registration
+---
+
+# Project Overview
+
+The Enterprise Authentication System is designed to demonstrate modern authentication and authorization techniques used in enterprise applications.
+
+The project supports three authentication methods:
+
+- Local Authentication using PostgreSQL
+- OpenID Connect using Keycloak
+- LDAP Authentication using OpenLDAP
+
+Regardless of the authentication method used, authenticated users receive a JWT token that is used to access protected resources within the application.
+
+---
+
+# Features
+
+- Local Authentication
+- OpenID Connect (Keycloak)
+- LDAP Authentication (OpenLDAP)
+- JWT Authentication
+- Role-Based Access Control (RBAC)
 - Secure Password Hashing using bcrypt
-- JWT Token Generation
-- JWT Authentication
-- Session Expiry Handling
-- Logout
-
----
-
-## OpenID Connect Authentication
-
-- Login using Keycloak
-- Authorization Code Flow
-- Dynamic OpenID Provider Loading
-- Token Exchange
-- ID Token Verification
-- Application JWT Generation
-- OpenID Group Mapping
-
----
-
-## Authorization
-
-- Role Based Access Control
-- Group Mapping
-- Administrator
-- Developer
-- User
-
----
-
-## Security
-
-- Password Hashing (bcrypt)
-- JWT Authentication
-- Protected Dashboard
-- Token Expiration Validation
-- Session Management
-
----
-
-## Infrastructure
-
-- Docker
-- Docker Compose
-- PostgreSQL
+- PostgreSQL Database
+- Dockerized Deployment
 - Nginx Reverse Proxy
 - KrakenD API Gateway
 - Swagger API Documentation
+- Cross-platform Startup Scripts (Windows & Linux)
 
 ---
 
-# 🛠 Technologies Used
+# System Architecture
 
-| Technology | Purpose |
-|------------|----------|
-| Node.js | Backend Runtime |
-| Express.js | REST API |
-| PostgreSQL | Database |
-| Knex.js | Database Migration |
-| JWT | Authentication |
-| bcrypt | Password Hashing |
-| Keycloak | Identity Provider |
-| OpenID Connect | Authentication Protocol |
-| Docker | Containerization |
-| Docker Compose | Multi-container Deployment |
-| KrakenD | API Gateway |
-| Nginx | Reverse Proxy |
-| Swagger | API Documentation |
-| HTML | Frontend |
-| CSS | Frontend Styling |
-| JavaScript | Frontend Logic |
-
----
-
-# 📂 Project Structure
-
+```text
+                              +----------------------+
+                              |      Frontend        |
+                              | HTML • CSS • JS      |
+                              +----------+-----------+
+                                         |
+                                   HTTP REST APIs
+                                         |
+                              +----------v-----------+
+                              |   Node.js Backend    |
+                              |     Express.js       |
+                              +----------+-----------+
+                                         |
+         +-------------------------------+-------------------------------+
+         |                               |                               |
+         |                               |                               |
++--------v---------+           +---------v---------+           +----------v---------+
+|   PostgreSQL     |           |    Keycloak      |           |     OpenLDAP      |
+|  Local Users     |           | OpenID Connect   |           | LDAP Directory    |
++------------------+           +------------------+           +-------------------+
+                                         |
+                                   JWT Generation
+                                         |
+                                  Protected Resources
 ```
-auth-system
+
+---
+
+# Technology Stack
+
+| Category | Technology |
+|----------|------------|
+| Frontend | HTML, CSS, JavaScript |
+| Backend | Node.js, Express.js |
+| Database | PostgreSQL |
+| Authentication | JWT |
+| Identity Provider | Keycloak |
+| Directory Service | OpenLDAP |
+| API Gateway | KrakenD |
+| Reverse Proxy | Nginx |
+| API Documentation | Swagger |
+| Containerization | Docker, Docker Compose |
+
+---
+
+# Project Structure
+
+```text
+auth-system/
 │
-├── backend
-│   ├── controllers
-│   ├── middleware
-│   ├── migrations
-│   ├── models
-│   ├── routes
-│   ├── seeds
-│   ├── services
-│   ├── Dockerfile
-│   └── server.js
+├── backend/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── migrations/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── seeds/
+│   └── Dockerfile
 │
-├── frontend
+├── frontend/
 │   ├── index.html
 │   ├── dashboard.html
-│   ├── dashboard.js
 │   ├── style.css
 │   └── Dockerfile
 │
-├── krakend
+├── krakend/
 │
-├── nginx
+├── nginx/
 │
 ├── docker-compose.yml
+│
+├── start.sh
+├── stop.sh
+├── reset.sh
+│
+├── start.bat
+├── stop.bat
+├── reset.bat
 │
 └── README.md
 ```
 
 ---
 
-# 🏗 System Architecture
+# Authentication Methods
 
-```
-                   Browser
-                       │
-                       ▼
-            Frontend (HTML/CSS/JS)
-                       │
-                       ▼
-              Nginx Reverse Proxy
-                       │
-                       ▼
-             KrakenD API Gateway
-                       │
-                       ▼
-              Node.js Backend
-              ↙             ↘
-      PostgreSQL        Keycloak
-```
+## 1. Local Authentication
+
+- User credentials are stored in PostgreSQL.
+- Passwords are securely hashed using bcrypt.
+- JWT tokens are generated after successful authentication.
 
 ---
 
-# 🔄 Authentication Flow
+## 2. OpenID Connect Authentication
 
-## Local Login
-
-```
-User
-
-↓
-
-Enter Email & Password
-
-↓
-
-Node.js Backend
-
-↓
-
-Validate Credentials
-
-↓
-
-Generate JWT
-
-↓
-
-Store JWT in Browser
-
-↓
-
-Dashboard
-```
+- Authentication is performed through Keycloak.
+- Supports OpenID Connect (OIDC).
+- Users are redirected to Keycloak for authentication.
+- After successful login, the application issues a JWT for authorization.
 
 ---
 
-## Keycloak Login
+## 3. LDAP Authentication
 
-```
-User
-
-↓
-
-Click Login with Keycloak
-
-↓
-
-Redirect to Keycloak
-
-↓
-
-Authenticate
-
-↓
-
-Authorization Code
-
-↓
-
-Node.js Backend
-
-↓
-
-Exchange Authorization Code
-
-↓
-
-Receive ID Token
-
-↓
-
-Map Keycloak Group
-
-↓
-
-Generate Application JWT
-
-↓
-
-Dashboard
-```
+- Authentication is performed using OpenLDAP.
+- Users authenticate through LDAP Bind.
+- User details and group memberships are retrieved from the LDAP directory.
+- LDAP groups are mapped to application roles.
+- A JWT token is generated after successful authentication.
 
 ---
 
-# 🗄 Database
+# Docker Services
 
-The project uses PostgreSQL.
-
-Main Tables:
-
-- users
-- groups
-- openid_providers
-- openid_group_mappings
-
----
-
-# 🔑 JWT Payload
-
-Example Application JWT Payload
-
-```json
-{
-  "username": "hari",
-  "email": "hari@gmail.com",
-  "group_id": 1,
-  "login_type": "openid",
-  "provider": "Keycloak",
-  "iat": 1750000000,
-  "exp": 1750003600
-}
-```
+| Container | Purpose |
+|-----------|---------|
+| frontend_server | Frontend Application |
+| node_backend | Express Backend |
+| postgres_db | PostgreSQL Database |
+| keycloak | OpenID Connect Provider |
+| openldap_server | LDAP Directory |
+| phpldapadmin | LDAP Administration |
+| nginx_server | Reverse Proxy |
+| krakend_gateway | API Gateway |
 
 ---
 
-# 🚀 Running the Project
+# Installation
 
-## Clone Repository
+## Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/auth-system.git
-
+git clone <repository-url>
 cd auth-system
 ```
 
 ---
 
-## Start using Docker
+# Running the Project
+
+## Linux/macOS
+
+Start all services:
 
 ```bash
-docker compose up --build
+./start.sh
+```
+
+Stop all services:
+
+```bash
+./stop.sh
+```
+
+Reset the environment:
+
+```bash
+./reset.sh
 ```
 
 ---
 
-## Open Application
+## Windows
 
-Frontend
+Start all services:
 
-```
-http://localhost:5500
-```
-
-Backend
-
-```
-http://localhost:5000
+```cmd
+start.bat
 ```
 
-Swagger
+Stop all services:
+
+```cmd
+stop.bat
+```
+
+Reset the environment:
+
+```cmd
+reset.bat
+```
+
+---
+
+## Manual Docker Commands
+
+Build and start:
+
+```bash
+docker-compose up --build
+```
+
+Stop:
+
+```bash
+docker-compose down
+```
+
+---
+
+# API Documentation
+
+Swagger UI is available at:
 
 ```
 http://localhost:5000/api-docs
 ```
 
-Keycloak
-
-```
-http://localhost:8081
-```
-
-KrakenD
-
-```
-http://localhost:8090
-```
-
 ---
 
-# 📡 API Endpoints
+# Default Service URLs
 
-## User
-
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| POST | /users/create | Create User |
-
----
-
-## Authentication
-
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| POST | /auth/login | Local Login |
-
----
-
-## OpenID
-
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| GET | /openid/providers | Get Providers |
-| GET | /openid/login/:provider | Login using Provider |
-| GET | /openid/callback | OpenID Callback |
-
----
-
-## Group Mapping
-
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| POST | /openid-group-mappings/create | Create Group Mapping |
-
----
-
-# 🖥 Screenshots
-
-## Login Page
-
-![Login Page](screenshots/login-page.png)
-
----
-
-## Dashboard
-
-![Dashboard](screenshots/dashboard.png)
-
----
-
-## Keycloak Login
-
-![Keycloak Login](screenshots/keycloak-login.png)
-
----
-
-## Swagger API
-
-![Swagger](screenshots/swagger.png)
-
----
-
-## PostgreSQL Tables
-
-![Database](screenshots/postgres-tables.png)
-
----
-
-## Docker Containers
-
-![Docker](screenshots/docker-containers.png)
-
----
-
-## Architecture
-
-![Architecture](screenshots/architecture.png)
-
----
-
-# 🧪 Testing
-
-Successfully Tested
-
-- Local Login
-- Keycloak Login
-- JWT Authentication
-- Group Mapping
-- Dashboard
-- Logout
-- Session Expiration
-- Docker Deployment
-- PostgreSQL Connectivity
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:5500 |
+| Backend | http://localhost:5000 |
+| Swagger | http://localhost:5000/api-docs |
+| PostgreSQL | localhost:5432 |
+| Keycloak | http://localhost:8081 |
+| phpLDAPadmin | http://localhost:8082 |
+| Nginx | http://localhost:8080 |
+| KrakenD | http://localhost:8090 |
 
 ---
 
 
-# 👨‍💻 Author
+# Author
 
 **Haridharan B S**
-

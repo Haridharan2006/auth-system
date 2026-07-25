@@ -1,33 +1,26 @@
-# Node Modules
+# Dependencies
 node_modules/
 
-# Environment Files
+# Environment
 .env
-backend/.env
 
 # Logs
-logs/
 *.log
 npm-debug.log*
 
 # Coverage
 coverage/
 
-# Build
-dist/
-build/
+# OS files
+.DS_Store
+Thumbs.db
 
 # IDE
 .vscode/
 .idea/
 
-# OS Files
-.DS_Store
-Thumbs.db
-
-# Python
+# Python cache
 __pycache__/
-*.pyc
 
 # Docker
 *.pid

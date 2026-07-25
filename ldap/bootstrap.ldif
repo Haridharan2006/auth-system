@@ -1,0 +1,30 @@
+dn: ou=users,dc=authsystem,dc=local
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=groups,dc=authsystem,dc=local
+objectClass: organizationalUnit
+ou: groups
+
+dn: uid=hari,ou=users,dc=authsystem,dc=local
+objectClass: inetOrgPerson
+cn: Hari
+sn: User
+uid: hari
+mail: hari@gmail.com
+userPassword: 1234
+
+dn: cn=admin,ou=groups,dc=authsystem,dc=local
+objectClass: groupOfNames
+cn: admin
+member: uid=hari,ou=users,dc=authsystem,dc=local
+
+dn: cn=developer,ou=groups,dc=authsystem,dc=local
+objectClass: groupOfNames
+cn: developer
+member: uid=hari,ou=users,dc=authsystem,dc=local
+
+dn: cn=user,ou=groups,dc=authsystem,dc=local
+objectClass: groupOfNames
+cn: user
+member: uid=hari,ou=users,dc=authsystem,dc=local
